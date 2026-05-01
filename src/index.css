@@ -810,7 +810,6 @@ body::after {
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
-  display: flex;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
 }
 

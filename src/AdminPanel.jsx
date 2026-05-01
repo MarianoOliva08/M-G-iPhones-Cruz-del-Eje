@@ -3,8 +3,6 @@ import { ArrowLeft, Plus, Edit2, Trash2, Save, X, ImagePlus, Lock, Eye, EyeOff, 
 import logoMM from './assets/logo-white-apple-removebg-preview.png';
 import { supabase } from './supabase';
 
-const ADMIN_PASSWORD = 'eleven';
-
 const DB_KEY = 'mg_iphones_db';
 
 const defaultIphoneSpecs = {
@@ -64,20 +62,31 @@ function Toast({ message, type, onClose }) {
 
 // ── Login Screen ─────────────────────────────────────────────────────────────
 function LoginScreen({ onLogin, onExit }) {
+  const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState(false);
   const [shake, setShake] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (pass === ADMIN_PASSWORD) {
-      onLogin();
-    } else {
+    setLoading(true);
+    
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: pass
+    });
+    
+    setLoading(false);
+
+    if (error) {
       setError(true);
       setShake(true);
       setTimeout(() => setShake(false), 600);
       setTimeout(() => setError(false), 3000);
+    } else {
+      onLogin();
     }
   };
 
@@ -111,13 +120,30 @@ function LoginScreen({ onLogin, onExit }) {
         <p style={{ color: 'rgba(255,255,255,0.4)', margin: '0 0 2.5rem', fontSize: '0.95rem' }}>Ingresá la contraseña para continuar</p>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+          <div>
+            <input
+              type="email"
+              placeholder="Correo electrónico"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              autoFocus
+              required
+              style={{
+                width: '100%', padding: '1rem 1.2rem',
+                background: 'rgba(255,255,255,0.04)', border: `1px solid ${error ? 'rgba(255,69,58,0.5)' : 'rgba(255,255,255,0.1)'}`,
+                borderRadius: '14px', color: '#fff', fontSize: '1rem',
+                outline: 'none', fontFamily: 'Inter, sans-serif',
+                boxSizing: 'border-box', transition: 'border-color 0.3s'
+              }}
+            />
+          </div>
           <div style={{ position: 'relative' }}>
             <input
               type={showPass ? 'text' : 'password'}
               placeholder="Contraseña"
               value={pass}
               onChange={e => setPass(e.target.value)}
-              autoFocus
+              required
               style={{
                 width: '100%', padding: '1rem 3rem 1rem 1.2rem',
                 background: 'rgba(255,255,255,0.04)', border: `1px solid ${error ? 'rgba(255,69,58,0.5)' : 'rgba(255,255,255,0.1)'}`,
@@ -137,14 +163,14 @@ function LoginScreen({ onLogin, onExit }) {
             </p>
           )}
 
-          <button type="submit" style={{
+          <button type="submit" disabled={loading} style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
             background: '#A855F7', color: '#000', border: 'none',
             padding: '1rem', borderRadius: '14px', fontSize: '1rem', fontWeight: 800,
-            cursor: 'pointer', letterSpacing: '0.02em',
+            cursor: loading ? 'not-allowed' : 'pointer', letterSpacing: '0.02em', opacity: loading ? 0.7 : 1,
             boxShadow: '0 0 20px rgba(168, 85, 247,0.25)', transition: 'all 0.3s ease'
           }}>
-            <Lock size={18} /> Entrar al Panel
+            <Lock size={18} /> {loading ? 'Iniciando...' : 'Entrar al Panel'}
           </button>
         </form>
 
@@ -355,6 +381,23 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
   const [toast, setToast] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null); // product id
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setAuthed(!!session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setAuthed(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setAuthed(false);
+  };
+
   const showToast = (message, type = 'success') => setToast({ message, type });
 
   const handleSave = async (product) => {
@@ -483,8 +526,8 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
 
             {!isFormOpen && (
               <>
-              <button onClick={handleSeed} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem' }}>
-                Actualizar DB
+              <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'transparent', color: '#ff453a', border: '1px solid rgba(255,69,58,0.3)', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,69,58,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                Cerrar Sesión
               </button>
               <button onClick={startCreate} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#A855F7', color: '#000', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '0.95rem', boxShadow: '0 0 20px rgba(168, 85, 247,0.25)' }}>
                 <Plus size={18} /> Nuevo Producto rey

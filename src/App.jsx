@@ -6,24 +6,7 @@ import AdminPanel from './AdminPanel';
 import { supabase } from './supabase';
 import { resolveAssetUrl } from './utils';
 
-const initialProductsData = {
-  iphones: [
-    { id: 'ip13-black', name: 'iPhone 13 128GB', image: '/images/ip13_black.jpg', desc: 'Batería: 88%\nColor: Black', condition: 'Usado', batteryHealth: '88% de vida útil', specs: { pantalla: 'OLED de 6.1 pulgadas 2532 x 1170 píxeles a 460 ppi', procesador: 'Chip A15 Bionic', ram: '4 GB', almacenamiento: '128 GB', bateria: 'Capacidad de 3,227 mAh', camaraPrincipal: 'Principal: 12 MP con apertura de ƒ/1.6\nUltra Gran Angular: 12 MP con apertura de ƒ/2.4 y un campo de visión de 120°', video: 'Grabación en 4K Dolby Vision HDR hasta a 60 fps.', redes: 'Compatibilidad con tecnología 5G, Wi-Fi 6, Bluetooth 5.0' }, colors: ['#333333'], isNew: false, sold: false },
-    { id: 'ip13-red', name: 'iPhone 13 128GB', image: '/images/ip13_red.jpg', desc: 'Batería: 100%\nColor: Red', condition: 'Usado', batteryHealth: '100% de vida útil', specs: { pantalla: 'OLED de 6.1 pulgadas 2532 x 1170 píxeles a 460 ppi', procesador: 'Chip A15 Bionic', ram: '4 GB', almacenamiento: '128 GB', bateria: 'Capacidad de 3,227 mAh', camaraPrincipal: 'Principal: 12 MP con apertura de ƒ/1.6\nUltra Gran Angular: 12 MP con apertura de ƒ/2.4 y un campo de visión de 120°', video: 'Grabación en 4K Dolby Vision HDR hasta a 60 fps.', redes: 'Compatibilidad con tecnología 5G, Wi-Fi 6, Bluetooth 5.0' }, colors: ['#ff3b30'], isNew: false, sold: false },
-    { id: 'ip14-red', name: 'iPhone 14 128GB', image: '/images/ip14_red.jpg', desc: 'Batería: 85%\nColor: Red', condition: 'Usado', batteryHealth: '85% de vida útil', specs: { pantalla: 'OLED de 6.1 pulgadas 2532 x 1170 píxeles a 460 ppi', procesador: 'Chip A15 Bionic', ram: '6 GB', almacenamiento: '128 GB', bateria: 'Capacidad de 3,279 mAh', camaraPrincipal: 'Principal: 12 MP con apertura de ƒ/1.5\nUltra Gran Angular: 12 MP con apertura de ƒ/2.4', video: 'Grabación en 4K Dolby Vision HDR', redes: 'Compatibilidad con tecnología 5G, Wi-Fi 6, Bluetooth 5.3' }, colors: ['#ff3b30'], isNew: false, sold: false },
-    { id: 'ip15-pro', name: 'iPhone 15 Pro 128GB', image: '/images/ip15_pro_gray.jpg', desc: 'Batería: 86%\nColor: Gray', condition: 'Usado', batteryHealth: '86% de vida útil', specs: { pantalla: 'OLED de 6.1 pulgadas 2556 x 1179 píxeles a 460 ppi con ProMotion', procesador: 'Chip A17 Pro', ram: '8 GB', almacenamiento: '128 GB', bateria: 'Capacidad de 3,274 mAh', camaraPrincipal: 'Principal: 48 MP\nUltra Gran Angular: 12 MP\nTeleobjetivo 3x: 12 MP', video: 'Grabación en 4K Dolby Vision HDR hasta 60 fps. ProRes', redes: 'Compatibilidad con tecnología 5G, Wi-Fi 6E, Bluetooth 5.3' }, colors: ['#8c8c8c'], isNew: false, sold: false },
-    { id: 'ip16-pro', name: 'iPhone 16 Pro 128GB', image: '/images/ip16_pro_white.jpg', desc: 'Batería: 100%\nColor: White', condition: 'Usado', batteryHealth: '100% de vida útil', specs: { pantalla: 'OLED de 6.3 pulgadas con ProMotion', procesador: 'Chip A18 Pro', ram: '8 GB', almacenamiento: '128 GB', bateria: 'Batería mejorada', camaraPrincipal: 'Principal: 48 MP\nUltra Gran Angular: 48 MP\nTeleobjetivo 5x: 12 MP', video: 'Grabación en 4K Dolby Vision y Spatial Video', redes: 'Compatibilidad con tecnología 5G, Wi-Fi 7, Bluetooth 5.4' }, colors: ['#f0f0f0'], isNew: false, sold: true }
-  ],
-  fundas: [
-    { id: 'funda-silicone', name: 'Funda de Silicona', image: '/images/funda.png', desc: 'Protección premium con\nun tacto suave y agradable.', colors: ['#333333', '#A855F7', '#F5F5F7'], isNew: true, sold: false }
-  ],
-  vidrios: [
-    { id: 'vidrio-templado', name: 'Vidrio Templado 9H', image: '/images/vidrio.png', desc: 'Máxima resistencia contra\nrayones y caídas.', colors: ['#F5F5F7'], isNew: false, sold: false }
-  ],
-  cargadores: [
-    { id: 'cargador-20w', name: 'Cargador Rápido 20W', image: '/images/cargador.png', desc: 'Carga tu dispositivo al 50%\nen solo 30 minutos.', colors: ['#FFFFFF'], isNew: false, sold: false }
-  ]
-};
+
 
 const categoryTitles = {
   iphones: 'Modelos de iPhone disponibles en Córdoba',
@@ -36,22 +19,11 @@ let logoClicks = 0;
 let logoTimer = null;
 
 function App() {
-  const [dbData, setDbData] = useState(() => {
-    let parsedData = null;
-    try {
-      const local = localStorage.getItem('montivero_db');
-      if (local) parsedData = JSON.parse(local);
-    } catch {}
-    
-    if (parsedData && Object.keys(parsedData).length > 0) {
-      return {
-        iphones: parsedData.iphones || [],
-        fundas: parsedData.fundas || [],
-        vidrios: parsedData.vidrios || [],
-        cargadores: parsedData.cargadores || []
-      };
-    }
-    return initialProductsData;
+  const [dbData, setDbData] = useState({
+    iphones: [],
+    fundas: [],
+    vidrios: [],
+    cargadores: []
   });
   const [loading, setLoading] = useState(true);
 
@@ -105,8 +77,9 @@ function App() {
           specs: item.specs || {}
         });
       });
-      setDbData(groupedData);
     }
+
+    setDbData(groupedData);
 
     setLoading(false);
   };
@@ -524,6 +497,7 @@ function App() {
                     textDecoration: 'none',
                     fontWeight: 600,
                     marginTop: '2rem',
+                    marginBottom: '1.5rem',
                     fontFamily: 'Inter, sans-serif',
                     fontSize: '1.05rem',
                     boxShadow: '0 4px 15px rgba(37,211,102,0.25)',
