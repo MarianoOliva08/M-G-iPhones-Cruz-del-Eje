@@ -371,15 +371,15 @@ function App() {
               </div>
             </a>
 
-            <a href="#" className="contact-card social-card">
+            <div className="contact-card social-card" style={{ opacity: 0.6, cursor: 'not-allowed' }}>
               <div className="contact-icon-wrapper">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-montivero-dark)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg>
               </div>
               <div className="contact-info">
                 <h3>Facebook</h3>
-                <p>/Montivero</p>
+                <p>M&GiPhone (Próximamente)</p>
               </div>
-            </a>
+            </div>
           </div>
         </div>
       </section>
