@@ -31,6 +31,9 @@ const categoryTitles = {
   cargadores: 'Cargadores y accesorios de carga'
 };
 
+let logoClicks = 0;
+let logoTimer = null;
+
 function App() {
   const [dbData, setDbData] = useState(() => {
     let parsedData = null;
@@ -131,21 +134,17 @@ function App() {
 
   const currentProducts = dbData[activeCategory] || [];
 
-  const clickCountRef = React.useRef(0);
-  const clickTimerRef = React.useRef(null);
-
   const handleLogoClick = () => {
-    clickCountRef.current += 1;
-    if (clickCountRef.current >= 3) {
+    logoClicks += 1;
+    if (logoClicks >= 3) {
       setView('admin');
-      clickCountRef.current = 0;
+      logoClicks = 0;
       return;
     }
-    
-    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
-    clickTimerRef.current = setTimeout(() => {
-      clickCountRef.current = 0;
-    }, 1500); // Reset after 1.5s
+    if (logoTimer) clearTimeout(logoTimer);
+    logoTimer = setTimeout(() => {
+      logoClicks = 0;
+    }, 1500);
   };
 
   return (
