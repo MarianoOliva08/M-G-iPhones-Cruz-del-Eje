@@ -10,6 +10,69 @@ const defaultIphoneSpecs = {
   bateria: '', camaraPrincipal: '', video: '', redes: ''
 };
 
+const IPHONE_CATALOG = {
+  "iPhone 11": {
+    specs: { pantalla: 'Liquid Retina HD LCD de 6.1"\nResolución de 1792 x 828', procesador: 'Chip A13 Bionic', ram: '4 GB', camaraPrincipal: 'Gran angular: 12 MP con apertura de ƒ/1.8\nUltra gran angular: 12 MP con apertura de ƒ/2.4', video: 'Grabación de video 4K a 60 cps', redes: '4G LTE' },
+    almacenamientoOpciones: ['64 GB', '128 GB', '256 GB'], bateriaOpciones: ['3110 mAh (Li-Ion)'],
+    colors: ['#000000', '#ffffff', '#ff0000', '#ffe680', '#e6e6fa', '#98fb98']
+  },
+  "iPhone 12": {
+    specs: { pantalla: 'Super Retina XDR OLED de 6.1"\nResolución de 2532 x 1170', procesador: 'Chip A14 Bionic', ram: '4 GB', camaraPrincipal: 'Gran angular: 12 MP con apertura de ƒ/1.6\nUltra gran angular: 12 MP con apertura de ƒ/2.4', video: '4K HDR con Dolby Vision', redes: '5G' },
+    almacenamientoOpciones: ['64 GB', '128 GB', '256 GB'], bateriaOpciones: ['2815 mAh (Li-Ion)'],
+    colors: ['#000000', '#ffffff', '#ff0000', '#e6e6fa', '#0000ff', '#98fb98']
+  },
+  "iPhone 13": {
+    specs: { pantalla: 'Super Retina XDR OLED de 6.1"\nResolución de 2532 x 1170', procesador: 'Chip A15 Bionic', ram: '4 GB', camaraPrincipal: 'Gran angular: 12 MP con apertura de ƒ/1.6\nUltra gran angular: 12 MP con apertura de ƒ/2.4', video: 'Modo Cine, 4K HDR', redes: '5G' },
+    almacenamientoOpciones: ['128 GB', '256 GB', '512 GB'], bateriaOpciones: ['3227 mAh (Li-Ion)'],
+    colors: ['#333333', '#f5f5f7', '#ff3b30', '#255c99', '#f2dcdb', '#1a3622']
+  },
+  "iPhone 13 Pro": {
+    specs: { pantalla: 'Super Retina XDR OLED de 6.1" ProMotion 120Hz\nResolución de 2532 x 1170', procesador: 'Chip A15 Bionic', ram: '6 GB', camaraPrincipal: 'Gran angular: 12 MP con apertura de ƒ/1.5\nUltra gran angular: 12 MP con apertura de ƒ/1.8\nTeleobjetivo 3x: 12 MP con apertura de ƒ/2.8', video: 'ProRes 4K, Modo Cine', redes: '5G' },
+    almacenamientoOpciones: ['128 GB', '256 GB', '512 GB', '1 TB'], bateriaOpciones: ['3095 mAh (Li-Ion)'],
+    colors: ['#4b4b4b', '#f0f0f0', '#ebd8c0', '#a7c1d9', '#536d5c']
+  },
+  "iPhone 13 Pro Max": {
+    specs: { pantalla: 'Super Retina XDR OLED de 6.7" ProMotion 120Hz\nResolución de 2778 x 1284', procesador: 'Chip A15 Bionic', ram: '6 GB', camaraPrincipal: 'Gran angular: 12 MP con apertura de ƒ/1.5\nUltra gran angular: 12 MP con apertura de ƒ/1.8\nTeleobjetivo 3x: 12 MP con apertura de ƒ/2.8', video: 'ProRes 4K, Modo Cine', redes: '5G' },
+    almacenamientoOpciones: ['128 GB', '256 GB', '512 GB', '1 TB'], bateriaOpciones: ['4352 mAh (Li-Ion)'],
+    colors: ['#4b4b4b', '#f0f0f0', '#ebd8c0', '#a7c1d9', '#536d5c']
+  },
+  "iPhone 14": {
+    specs: { pantalla: 'Super Retina XDR OLED de 6.1"\nResolución de 2532 x 1170', procesador: 'Chip A15 Bionic', ram: '6 GB', camaraPrincipal: 'Gran angular: 12 MP con apertura de ƒ/1.5\nUltra gran angular: 12 MP con apertura de ƒ/2.4', video: 'Modo Acción, Modo Cine', redes: '5G' },
+    almacenamientoOpciones: ['128 GB', '256 GB', '512 GB'], bateriaOpciones: ['3279 mAh (Li-Ion)'],
+    colors: ['#333333', '#f5f5f7', '#ff3b30', '#a0b4c7', '#e2d3e1', '#f9e547']
+  },
+  "iPhone 14 Pro": {
+    specs: { pantalla: 'Super Retina XDR OLED 6.1" ProMotion 120Hz (Dynamic Island)\nResolución de 2556 x 1179', procesador: 'Chip A16 Bionic', ram: '6 GB', camaraPrincipal: 'Principal: 48 MP con apertura de ƒ/1.78\nUltra gran angular: 12 MP con apertura de ƒ/2.2\nTeleobjetivo 3x: 12 MP con apertura de ƒ/2.8', video: 'ProRes 4K, Modo Cine', redes: '5G' },
+    almacenamientoOpciones: ['128 GB', '256 GB', '512 GB', '1 TB'], bateriaOpciones: ['3200 mAh (Li-Ion)'],
+    colors: ['#4b4b4b', '#f0f0f0', '#ebd8c0', '#594f63']
+  },
+  "iPhone 14 Pro Max": {
+    specs: { pantalla: 'Super Retina XDR OLED 6.7" ProMotion 120Hz (Dynamic Island)\nResolución de 2796 x 1290', procesador: 'Chip A16 Bionic', ram: '6 GB', camaraPrincipal: 'Principal: 48 MP con apertura de ƒ/1.78\nUltra gran angular: 12 MP con apertura de ƒ/2.2\nTeleobjetivo 3x: 12 MP con apertura de ƒ/2.8', video: 'ProRes 4K, Modo Cine', redes: '5G' },
+    almacenamientoOpciones: ['128 GB', '256 GB', '512 GB', '1 TB'], bateriaOpciones: ['4323 mAh (Li-Ion)'],
+    colors: ['#4b4b4b', '#f0f0f0', '#ebd8c0', '#594f63']
+  },
+  "iPhone 15": {
+    specs: { pantalla: 'Super Retina XDR OLED 6.1" (Dynamic Island)\nResolución de 2556 x 1179', procesador: 'Chip A16 Bionic', ram: '6 GB', camaraPrincipal: 'Principal: 48 MP con apertura de ƒ/1.6\nUltra gran angular: 12 MP con apertura de ƒ/2.4', video: 'Modo Cine 4K, Acción', redes: '5G, USB-C' },
+    almacenamientoOpciones: ['128 GB', '256 GB', '512 GB'], bateriaOpciones: ['3349 mAh (Li-Ion)'],
+    colors: ['#333333', '#e2ebf3', '#cfd9d0', '#fcebbd', '#f0cece']
+  },
+  "iPhone 15 Pro": {
+    specs: { pantalla: 'Super Retina XDR OLED 6.1" ProMotion 120Hz (Dynamic Island)\nResolución de 2556 x 1179', procesador: 'Chip A17 Pro', ram: '8 GB', camaraPrincipal: 'Principal: 48 MP con apertura de ƒ/1.78\nUltra gran angular: 12 MP con apertura de ƒ/2.2\nTeleobjetivo 3x: 12 MP con apertura de ƒ/2.8', video: 'Video Espacial, ProRes 4K', redes: '5G, USB-C, Wi-Fi 6E' },
+    almacenamientoOpciones: ['128 GB', '256 GB', '512 GB', '1 TB'], bateriaOpciones: ['3274 mAh (Li-Ion)'],
+    colors: ['#3b3a38', '#f0f0f0', '#4a4e5c', '#8c8c8c']
+  },
+  "iPhone 15 Pro Max": {
+    specs: { pantalla: 'Super Retina XDR OLED 6.7" ProMotion 120Hz (Dynamic Island)\nResolución de 2796 x 1290', procesador: 'Chip A17 Pro', ram: '8 GB', camaraPrincipal: 'Principal: 48 MP con apertura de ƒ/1.78\nUltra gran angular: 12 MP con apertura de ƒ/2.2\nTeleobjetivo 5x: 12 MP con apertura de ƒ/2.8', video: 'Video Espacial, ProRes 4K', redes: '5G, USB-C, Wi-Fi 6E' },
+    almacenamientoOpciones: ['256 GB', '512 GB', '1 TB'], bateriaOpciones: ['4422 mAh (Li-Ion)'],
+    colors: ['#3b3a38', '#f0f0f0', '#4a4e5c', '#8c8c8c']
+  },
+  "iPhone 16 Pro": {
+    specs: { pantalla: 'Super Retina XDR OLED 6.3" ProMotion 120Hz\nResolución mejorada', procesador: 'Chip A18 Pro', ram: '8 GB', camaraPrincipal: 'Fusion: 48 MP\nUltra gran angular: 48 MP\nTeleobjetivo 5x: 12 MP', video: 'Spatial Video, 4K Dolby Vision', redes: '5G, Wi-Fi 7' },
+    almacenamientoOpciones: ['128 GB', '256 GB', '512 GB', '1 TB'], bateriaOpciones: ['3582 mAh (Li-Ion)'],
+    colors: ['#3b3a38', '#f0f0f0', '#8c8c8c', '#cba88c']
+  }
+};
+
 const SPEC_LABELS = {
   pantalla: 'Pantalla', procesador: 'Procesador', ram: 'Memoria RAM',
   almacenamiento: 'Almacenamiento (GB)', bateria: 'Batería',
@@ -199,9 +262,32 @@ function LoginScreen({ onLogin, onExit }) {
 // ── Product Form ─────────────────────────────────────────────────────────────
 function ProductForm({ product, activeCategory, onSave, onCancel }) {
   const [form, setForm] = useState(product);
+  const [selectedTemplate, setSelectedTemplate] = useState('');
   const fileRef = useRef();
 
   const currentImages = form.images?.length > 0 ? form.images : (form.image ? [form.image] : []);
+
+  const handleTemplateSelect = (e) => {
+    const modelName = e.target.value;
+    setSelectedTemplate(modelName);
+    if (!modelName) return;
+    
+    const template = IPHONE_CATALOG[modelName];
+    setForm(p => ({
+      ...p,
+      name: p.name || modelName,
+      specs: { ...defaultIphoneSpecs, ...template.specs, bateria: p.specs?.bateria || '', almacenamiento: p.specs?.almacenamiento || '' },
+      colors: [] // clear colors so they can pick one
+    }));
+  };
+
+  const toggleColor = (color) => {
+    setForm(p => {
+      const current = p.colors || [];
+      if (current.includes(color)) return { ...p, colors: current.filter(c => c !== color) };
+      return { ...p, colors: [...current, color] };
+    });
+  };
 
   const set = (field, value) => setForm(p => ({ ...p, [field]: value }));
   const setSpec = (key, value) => setForm(p => ({ ...p, specs: { ...p.specs, [key]: value } }));
@@ -257,6 +343,21 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}>
+
+      {/* Template Selector for iPhones */}
+      {activeCategory === 'iphones' && (
+        <div style={{ background: 'rgba(168, 85, 247,0.08)', border: '1px solid rgba(168, 85, 247,0.2)', padding: '1.2rem', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#A855F7', fontWeight: 800 }}>
+            <Zap size={18} /> Rellenar datos automáticamente
+          </div>
+          <select style={{ ...inputStyle, background: 'rgba(0,0,0,0.5)', borderColor: 'rgba(168, 85, 247,0.4)', color: '#fff', cursor: 'pointer' }} value={selectedTemplate} onChange={handleTemplateSelect}>
+            <option value="">-- Seleccionar modelo base --</option>
+            {Object.keys(IPHONE_CATALOG).map(model => (
+              <option key={model} value={model}>{model}</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       {/* Image uploader */}
       <div>
@@ -317,9 +418,30 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
           </div>
         )}
 
-        <div>
-          <label style={labelStyle}>Colores (hex, separados por coma)</label>
-          <input style={inputStyle} value={form.colors?.join(', ') || ''} onChange={e => set('colors', e.target.value.split(',').map(c => c.trim()).filter(Boolean))} placeholder="#ffffff, #ff3b30" />
+        <div style={{ gridColumn: '1 / -1' }}>
+          <label style={labelStyle}>Colores disponibles en esta unidad</label>
+          {selectedTemplate && IPHONE_CATALOG[selectedTemplate] ? (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', padding: '0.8rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px' }}>
+              {IPHONE_CATALOG[selectedTemplate].colors.map(color => {
+                const isSelected = (form.colors || []).includes(color);
+                return (
+                  <button
+                    key={color} type="button" onClick={() => toggleColor(color)}
+                    style={{
+                      width: '40px', height: '40px', borderRadius: '50%', backgroundColor: color, cursor: 'pointer',
+                      border: isSelected ? '3px solid #A855F7' : '2px solid rgba(255,255,255,0.2)',
+                      boxShadow: isSelected ? '0 0 15px rgba(168, 85, 247,0.6)' : 'none',
+                      transform: isSelected ? 'scale(1.1)' : 'scale(1)', transition: 'all 0.2s', position: 'relative'
+                    }}
+                  >
+                    {isSelected && <CheckCircle size={16} color="#A855F7" style={{ position: 'absolute', bottom: -8, right: -8, background: '#000', borderRadius: '50%' }} />}
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <input style={inputStyle} value={form.colors?.join(', ') || ''} onChange={e => set('colors', e.target.value.split(',').map(c => c.trim()).filter(Boolean))} placeholder="#ffffff, #ff3b30" />
+          )}
         </div>
 
         <div style={{ gridColumn: '1 / -1' }}>
@@ -333,16 +455,31 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
         <div style={{ background: 'rgba(168, 85, 247,0.03)', border: '1px solid rgba(168, 85, 247,0.1)', borderRadius: '16px', padding: '1.5rem' }}>
           <h3 style={{ margin: '0 0 1.5rem', color: '#A855F7', fontSize: '0.95rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>⚙️ Especificaciones Técnicas</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem' }}>
-            {Object.keys(defaultIphoneSpecs).map(key => (
-              <div key={key}>
-                <label style={labelStyle}>{SPEC_LABELS[key] || key}</label>
-                {key === 'almacenamiento' ? (
-                  <input type="number" style={inputStyle} value={(form.specs?.[key] || '').replace(' GB', '')} onChange={e => setSpec(key, e.target.value ? `${e.target.value} GB` : '')} placeholder="128" />
-                ) : (
-                  <input style={inputStyle} value={form.specs?.[key] || ''} onChange={e => setSpec(key, e.target.value)} placeholder={`Ingresá ${SPEC_LABELS[key]?.toLowerCase()}`} />
-                )}
-              </div>
-            ))}
+            {Object.keys(defaultIphoneSpecs).map(key => {
+              const template = selectedTemplate ? IPHONE_CATALOG[selectedTemplate] : null;
+              return (
+                <div key={key} style={key === 'camaraPrincipal' || key === 'pantalla' ? { gridColumn: '1 / -1' } : {}}>
+                  <label style={labelStyle}>{SPEC_LABELS[key] || key}</label>
+                  {key === 'almacenamiento' && template?.almacenamientoOpciones ? (
+                    <select style={{...inputStyle, cursor: 'pointer'}} value={form.specs?.[key] || ''} onChange={e => setSpec(key, e.target.value)}>
+                      <option value="">Seleccionar...</option>
+                      {template.almacenamientoOpciones.map(o => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                  ) : key === 'bateria' && template?.bateriaOpciones ? (
+                    <select style={{...inputStyle, cursor: 'pointer'}} value={form.specs?.[key] || ''} onChange={e => setSpec(key, e.target.value)}>
+                      <option value="">Seleccionar...</option>
+                      {template.bateriaOpciones.map(o => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                  ) : key === 'camaraPrincipal' || key === 'pantalla' ? (
+                    <textarea style={{...inputStyle, minHeight: '80px', resize: 'vertical', lineHeight: '1.4'}} value={form.specs?.[key] || ''} onChange={e => setSpec(key, e.target.value)} placeholder={`Ingresá ${SPEC_LABELS[key]?.toLowerCase()}`} />
+                  ) : key === 'almacenamiento' ? (
+                    <input style={inputStyle} value={form.specs?.[key] || ''} onChange={e => setSpec(key, e.target.value)} placeholder="Ej: 128 GB" />
+                  ) : (
+                    <input style={inputStyle} value={form.specs?.[key] || ''} onChange={e => setSpec(key, e.target.value)} placeholder={`Ingresá ${SPEC_LABELS[key]?.toLowerCase()}`} />
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
