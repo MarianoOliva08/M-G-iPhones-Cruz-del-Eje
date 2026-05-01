@@ -4,6 +4,7 @@ import logoMM from './assets/logo-white-apple-removebg-preview.png';
 import './index.css';
 import AdminPanel from './AdminPanel';
 import { supabase } from './supabase';
+import { resolveAssetUrl } from './utils';
 
 const initialProductsData = {
   iphones: [
@@ -226,7 +227,7 @@ function App() {
           {currentProducts.map((product) => (
             <div className="product-card" key={product.id} style={{ flex: currentProducts.length < 4 ? '0 1 300px' : '1', '--card-color': (product.colors && product.colors.length > 0) ? product.colors[0] : 'var(--color-montivero-primary)' }} onClick={() => setSelectedProduct(product)}>
               <div className="product-image-wrapper">
-                <img src={product.image} alt={product.name} className="product-image" />
+                <img src={resolveAssetUrl(product.image)} alt={product.name} className="product-image" />
               </div>
               <div className="color-dots">
                 {(product.colors || []).map((color, idx) => (
@@ -415,17 +416,17 @@ function App() {
               <div className="modal-image-section">
                 {selectedProduct.images?.length > 0 ? (
                   <div style={{ width: '100%' }}>
-                    <img src={selectedProduct.images[0]} alt={selectedProduct.name} className="modal-image" style={{ marginBottom: '1rem' }} />
+                    <img src={resolveAssetUrl(selectedProduct.images[0])} alt={selectedProduct.name} className="modal-image" style={{ marginBottom: '1rem' }} />
                     {selectedProduct.images.length > 1 && (
                       <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
                         {selectedProduct.images.map((img, idx) => (
-                          <img key={idx} src={img} alt="Miniatura" style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px', border: idx === 0 ? '2px solid var(--color-montivero-dark)' : '1px solid #eee' }} />
+                          <img key={idx} src={resolveAssetUrl(img)} alt="Miniatura" style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px', border: idx === 0 ? '2px solid var(--color-montivero-dark)' : '1px solid #eee' }} />
                         ))}
                       </div>
                     )}
                   </div>
                 ) : (
-                  <img src={selectedProduct.image} alt={selectedProduct.name} className="modal-image" />
+                  <img src={resolveAssetUrl(selectedProduct.image)} alt={selectedProduct.name} className="modal-image" />
                 )}
               </div>
 
