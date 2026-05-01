@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, Plus, Edit2, Trash2, Save, X, ImagePlus, Lock, Eye, EyeOff, Package, Smartphone, Shield, Zap, Maximize, CheckCircle, AlertCircle, Database } from 'lucide-react';
 import logoMM from './assets/logo-white-apple-removebg-preview.png';
+import { supabase } from './supabase';
 
 const ADMIN_PASSWORD = 'eleven';
 
@@ -264,8 +265,8 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
       {/* Basic info */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem' }}>
         <div style={{ gridColumn: '1 / -1' }}>
-          <label style={labelStyle}>Nombre del producto *</label>
-          <input required style={inputStyle} value={form.name} onChange={e => set('name', e.target.value)} placeholder="Ej: iPhone 15 Pro 128GB" />
+          <label style={labelStyle}>Nombre del producto</label>
+          <input style={inputStyle} value={form.name} onChange={e => set('name', e.target.value)} placeholder="Ej: iPhone 15 Pro 128GB" />
         </div>
 
         <div>
@@ -346,7 +347,7 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
 }
 
 // ── Main Admin Panel ──────────────────────────────────────────────────────────
-export default function AdminPanel({ dbData, setDbData, onExit }) {
+export default function AdminPanel({ dbData, fetchProducts, onExit }) {
   const [authed, setAuthed] = useState(false);
   const [activeCategory, setActiveCategory] = useState('iphones');
   const [editing, setEditing] = useState(null);   // product obj or null
@@ -356,29 +357,79 @@ export default function AdminPanel({ dbData, setDbData, onExit }) {
 
   const showToast = (message, type = 'success') => setToast({ message, type });
 
-  const handleSave = (product) => {
-    setDbData(prev => {
-      const list = [...(prev[activeCategory] || [])];
-      if (creating) {
-        list.push(product);
-      } else {
-        const idx = list.findIndex(p => p.id === product.id);
-        if (idx !== -1) list[idx] = product;
-      }
-      return { ...prev, [activeCategory]: list };
-    });
+  const handleSave = async (product) => {
+    const payload = {
+      id: product.id,
+      category: activeCategory,
+      name: product.name,
+      image: product.image,
+      images: product.images,
+      description: product.desc,
+      condition: product.condition,
+      battery_health: product.batteryHealth,
+      price: product.price ? parseFloat(product.price) : null,
+      is_new: product.isNew,
+      sold: product.sold,
+      colors: product.colors,
+      specs: product.specs
+    };
+
+    const { error } = await supabase.from('products').upsert(payload);
+    if (error) {
+      console.error('Error saving:', error);
+      showToast(`Error: ${error.message || 'Error desconocido'}`, 'error');
+      return;
+    }
+
+    await fetchProducts();
     setEditing(null);
     setCreating(false);
     showToast(creating ? '¡Producto creado exitosamente!' : '¡Producto actualizado!');
   };
 
-  const handleDelete = (id) => {
-    setDbData(prev => ({
-      ...prev,
-      [activeCategory]: prev[activeCategory].filter(p => p.id !== id)
-    }));
+  const handleDelete = async (id) => {
+    const { error } = await supabase.from('products').delete().eq('id', id);
+    if (error) {
+      console.error('Error deleting:', error);
+      showToast('Error al eliminar', 'error');
+      return;
+    }
+
+    await fetchProducts();
     setDeleteConfirm(null);
     showToast('Producto eliminado.', 'error');
+  };
+
+  const handleSeed = async () => {
+    const allProducts = [];
+    Object.keys(dbData).forEach(cat => {
+      (dbData[cat] || []).forEach(prod => {
+        allProducts.push({
+          id: prod.id,
+          category: cat,
+          name: prod.name,
+          image: prod.image,
+          images: prod.images || [],
+          description: prod.desc || '',
+          condition: prod.condition,
+          battery_health: prod.batteryHealth,
+          price: prod.price ? parseFloat(prod.price) : null,
+          is_new: prod.isNew || false,
+          sold: prod.sold || false,
+          colors: prod.colors || [],
+          specs: prod.specs || {}
+        });
+      });
+    });
+
+    const { error } = await supabase.from('products').upsert(allProducts);
+    if (error) {
+      console.error(error);
+      showToast(`Error iniciales: ${error.message || 'Desconocido'}`, 'error');
+    } else {
+      await fetchProducts();
+      showToast('¡Todos tus productos fueron respaldados en la nube!');
+    }
   };
 
   const startEdit = (product) => { setCreating(false); setEditing(product); };
@@ -431,9 +482,14 @@ export default function AdminPanel({ dbData, setDbData, onExit }) {
             </div>
 
             {!isFormOpen && (
-              <button onClick={startCreate} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#1FEDD2', color: '#000', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '0.95rem', boxShadow: '0 0 20px rgba(31,237,210,0.25)' }}>
-                <Plus size={18} /> Nuevo Producto
+              <>
+              <button onClick={handleSeed} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem' }}>
+                Actualizar DB
               </button>
+              <button onClick={startCreate} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#1FEDD2', color: '#000', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '0.95rem', boxShadow: '0 0 20px rgba(31,237,210,0.25)' }}>
+                <Plus size={18} /> Nuevo Producto rey
+              </button>
+              </>
             )}
           </div>
         </div>
