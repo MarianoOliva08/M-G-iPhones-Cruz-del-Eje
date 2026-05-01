@@ -131,13 +131,25 @@ function App() {
 
   const currentProducts = dbData[activeCategory] || [];
 
+  const clickCountRef = React.useRef(0);
+  const clickTimerRef = React.useRef(null);
+
+  const handleLogoClick = () => {
+    clickCountRef.current += 1;
+    if (clickCountRef.current >= 3) {
+      setView('admin');
+      clickCountRef.current = 0;
+      return;
+    }
+    
+    if (clickTimerRef.current) clearTimeout(clickTimerRef.current);
+    clickTimerRef.current = setTimeout(() => {
+      clickCountRef.current = 0;
+    }, 1500); // Reset after 1.5s
+  };
+
   return (
     <>
-      <div 
-        onClick={() => setView('admin')} 
-        style={{ position: 'fixed', top: 0, left: 0, width: '60px', height: '60px', zIndex: 99999 }} 
-      />
-
       <nav className="global-nav">
         <div className="nav-content">
 
@@ -163,7 +175,7 @@ function App() {
 
           {/* Center: logo */}
           <div className="nav-logo">
-            <img src={logoMM} alt="Logo M&G iPhones" className="nav-logo-img" />
+            <img src={logoMM} alt="Logo M&G iPhones" className="nav-logo-img" onClick={handleLogoClick} />
           </div>
 
           {/* Right: actions */}
@@ -172,9 +184,6 @@ function App() {
               const el = document.getElementById('contacto');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}>Contacto</span>
-            <span onClick={() => setView('admin')} className="nav-admin-btn">
-              Admin
-            </span>
           </div>
 
         </div>
