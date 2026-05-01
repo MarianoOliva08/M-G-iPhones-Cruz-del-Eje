@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Apple, Smartphone, Shield, Maximize, BatteryCharging, PackageSearch, FileText, CalendarCheck, MessageCircle, Truck, MapPin, CalendarDays, X, Users, CreditCard, ShoppingBag } from 'lucide-react';
-import logoMM from './assets/Logo.Empresa.png';
+import logoMM from './assets/logo-white-apple-removebg-preview.png';
 import './index.css';
 import AdminPanel from './AdminPanel';
 
@@ -180,20 +180,17 @@ function App() {
     <>
       <nav className="global-nav">
         <div className="nav-content">
-          <div className="nav-logo" style={{ display: 'flex', alignItems: 'center' }}>
-            <img src={logoMM} alt="Logo Montivero" className="nav-logo-img" />
-            {/* <h2 style={{margin: 0, color: '#ffffff', fontWeight: 700, letterSpacing: '-0.02em', marginLeft: '0.8rem'}}>Montivero</h2> */}
-          </div>
+
+          {/* Left: nav links */}
           <div className="nav-links">
             <span onClick={() => {
               const el = document.getElementById('productos');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}>iPhones y accesorios</span>
+            }}>iPhones</span>
             <span onClick={() => {
               const el = document.getElementById('nosotros');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}>Nosotros</span>
-            {/* <span>Garantía</span> */}
             <span onClick={() => {
               const el = document.getElementById('comprar');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -202,17 +199,24 @@ function App() {
               const el = document.getElementById('envios');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}>Envíos</span>
+          </div>
+
+          {/* Center: logo */}
+          <div className="nav-logo">
+            <img src={logoMM} alt="Logo M&G iPhones" className="nav-logo-img" />
+          </div>
+
+          {/* Right: actions */}
+          <div className="nav-actions">
             <span onClick={() => {
               const el = document.getElementById('contacto');
               if (el) el.scrollIntoView({ behavior: 'smooth' });
             }}>Contacto</span>
-            <span onClick={() => setView('admin')} style={{ backgroundColor: 'var(--color-montivero-primary)', color: 'var(--color-montivero-dark)', fontWeight: 700 }}>
+            <span onClick={() => setView('admin')} className="nav-admin-btn">
               Admin
             </span>
           </div>
-          <div className="nav-search">
-            <Search size={18} />
-          </div>
+
         </div>
       </nav>
 
@@ -308,7 +312,7 @@ function App() {
             <div className="step-card">
               <div className="step-number">1</div>
               <div className="step-icon">
-                <Smartphone size={32} color="var(--color-montivero-dark)" strokeWidth={1.5} />
+                <Smartphone size={32} color="var(--white)" strokeWidth={1.5} />
               </div>
               <h3>Elegí tu modelo</h3>
               <p>Explorá nuestro catálogo online y mira los modelos de iPhone o accesorios disponibles que más te gusten.</p>
@@ -317,7 +321,7 @@ function App() {
             <div className="step-card">
               <div className="step-number">2</div>
               <div className="step-icon">
-                <MessageCircle size={32} color="var(--color-montivero-dark)" strokeWidth={1.5} />
+                <MessageCircle size={32} color="var(--white)" strokeWidth={1.5} />
               </div>
               <h3>Contactanos</h3>
               <p>Escribinos por WhatsApp o redes sociales indicando qué equipo o accesorio te interesa adquirir.</p>
@@ -326,7 +330,7 @@ function App() {
             <div className="step-card">
               <div className="step-number">3</div>
               <div className="step-icon">
-                <CalendarCheck size={32} color="var(--color-montivero-dark)" strokeWidth={1.5} />
+                <CalendarCheck size={32} color="var(--white)" strokeWidth={1.5} />
               </div>
               <h3>Coordinamos entrega</h3>
               <p>Acordamos una cita en un lugar público y seguro para que puedas ver y recibir tu producto personalmente.</p>
@@ -335,7 +339,7 @@ function App() {
             <div className="step-card">
               <div className="step-number">4</div>
               <div className="step-icon">
-                <CreditCard size={32} color="var(--color-montivero-dark)" strokeWidth={1.5} />
+                <CreditCard size={32} color="var(--white)" strokeWidth={1.5} />
               </div>
               <h3>Pago seguro</h3>
               <p>Una vez que verifiques el equipo en persona, realizas el pago mediante el método acordado previamente.</p>
@@ -421,7 +425,7 @@ function App() {
         <div className="modal-overlay" onClick={() => setSelectedProduct(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setSelectedProduct(null)}>
-              <X size={20} color="var(--color-montivero-dark)" strokeWidth={2} />
+              <X size={20} color="var(--white)" strokeWidth={2} />
             </button>
 
             <div className="modal-body">
