@@ -488,7 +488,7 @@ function App() {
                 )}
 
                 <a 
-                  href={`https://wa.me/5493549597237?text=Hola!%20Me%20interesa%20el%20${encodeURIComponent(selectedProduct.name)}`} 
+                  href={`https://wa.me/5493549597237?text=Hola!%20Vengo%20de%20la%20página%20web.%20Me%20interesa%20el%20*${encodeURIComponent(selectedProduct.name)}*.%0A%0A*Detalles:*%0A-%20Condición:%20${encodeURIComponent(selectedProduct.condition || 'No especificada')}%0A-%20Batería:%20${encodeURIComponent(selectedProduct.batteryHealth || 'No especificada')}%0A%0A¿Sigue%20disponible?`} 
                   target="_blank" 
                   rel="noreferrer"
                   style={{
