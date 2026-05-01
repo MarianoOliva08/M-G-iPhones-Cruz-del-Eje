@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Apple, Smartphone, Shield, Maximize, BatteryCharging, PackageSearch, FileText, CalendarCheck, MessageCircle, Truck, MapPin, CalendarDays, X, Users, CreditCard, ShoppingBag } from 'lucide-react';
+import { Search, Apple, Smartphone, Shield, Maximize, BatteryCharging, PackageSearch, FileText, CalendarCheck, MessageCircle, Truck, MapPin, CalendarDays, X, Users, CreditCard, ShoppingBag, Palette, Sparkles, XCircle } from 'lucide-react';
 import logoMM from './assets/logo-white-apple-removebg-preview.png';
 import './index.css';
 import AdminPanel from './AdminPanel';
@@ -14,7 +14,7 @@ const initialProductsData = {
     { id: 'ip16-pro', name: 'iPhone 16 Pro 128GB', image: '/images/ip16_pro_white.jpg', desc: 'Batería: 100%\nColor: White', condition: 'Usado', batteryHealth: '100% de vida útil', specs: { pantalla: 'OLED de 6.3 pulgadas con ProMotion', procesador: 'Chip A18 Pro', ram: '8 GB', almacenamiento: '128 GB', bateria: 'Batería mejorada', camaraPrincipal: 'Principal: 48 MP\nUltra Gran Angular: 48 MP\nTeleobjetivo 5x: 12 MP', video: 'Grabación en 4K Dolby Vision y Spatial Video', redes: 'Compatibilidad con tecnología 5G, Wi-Fi 7, Bluetooth 5.4' }, colors: ['#f0f0f0'], isNew: false, sold: true }
   ],
   fundas: [
-    { id: 'funda-silicone', name: 'Funda de Silicona', image: '/images/funda.png', desc: 'Protección premium con\nun tacto suave y agradable.', colors: ['#333333', '#1FEDD2', '#F5F5F7'], isNew: true, sold: false }
+    { id: 'funda-silicone', name: 'Funda de Silicona', image: '/images/funda.png', desc: 'Protección premium con\nun tacto suave y agradable.', colors: ['#333333', '#A855F7', '#F5F5F7'], isNew: true, sold: false }
   ],
   vidrios: [
     { id: 'vidrio-templado', name: 'Vidrio Templado 9H', image: '/images/vidrio.png', desc: 'Máxima resistencia contra\nrayones y caídas.', colors: ['#F5F5F7'], isNew: false, sold: false }
@@ -33,10 +33,20 @@ const categoryTitles = {
 
 function App() {
   const [dbData, setDbData] = useState(() => {
+    let parsedData = null;
     try {
       const local = localStorage.getItem('montivero_db');
-      if (local) return JSON.parse(local);
+      if (local) parsedData = JSON.parse(local);
     } catch {}
+    
+    if (parsedData && Object.keys(parsedData).length > 0) {
+      return {
+        iphones: parsedData.iphones || [],
+        fundas: parsedData.fundas || [],
+        vidrios: parsedData.vidrios || [],
+        cargadores: parsedData.cargadores || []
+      };
+    }
     return initialProductsData;
   });
   const [loading, setLoading] = useState(true);
@@ -44,6 +54,16 @@ function App() {
   const [activeCategory, setActiveCategory] = useState('iphones');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [view, setView] = useState('store'); // 'store' or 'admin'
+  const [showFloatingButton, setShowFloatingButton] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isNearBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 300;
+      setShowFloatingButton(!isNearBottom);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -91,6 +111,20 @@ function App() {
     fetchProducts();
   }, [view]); // Re-fetch when switching back from admin
 
+  // Bloquear el scroll del fondo cuando el modal esté abierto
+  useEffect(() => {
+    if (selectedProduct) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    // Limpieza si el componente se desmonta mientras el modal está abierto
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedProduct]);
+
   if (view === 'admin') {
     return <AdminPanel dbData={dbData} fetchProducts={fetchProducts} onExit={() => setView('store')} />;
   }
@@ -99,6 +133,11 @@ function App() {
 
   return (
     <>
+      <div 
+        onClick={() => setView('admin')} 
+        style={{ position: 'fixed', top: 0, left: 0, width: '60px', height: '60px', zIndex: 99999 }} 
+      />
+
       <nav className="global-nav">
         <div className="nav-content">
 
@@ -177,7 +216,7 @@ function App() {
 
         <div className="products-grid" style={{ justifyContent: currentProducts.length < 4 ? 'center' : 'space-between', gap: '3rem' }}>
           {currentProducts.map((product) => (
-            <div className="product-card" key={product.id} style={{ flex: currentProducts.length < 4 ? '0 1 300px' : '1' }} onClick={() => setSelectedProduct(product)}>
+            <div className="product-card" key={product.id} style={{ flex: currentProducts.length < 4 ? '0 1 300px' : '1', '--card-color': (product.colors && product.colors.length > 0) ? product.colors[0] : 'var(--color-montivero-primary)' }} onClick={() => setSelectedProduct(product)}>
               <div className="product-image-wrapper">
                 <img src={product.image} alt={product.name} className="product-image" />
               </div>
@@ -195,14 +234,29 @@ function App() {
                 {product.sold && <div className="product-sold">Vendido</div>}
               </div>
               <h3 className="product-title">{product.name}</h3>
-              <p className="product-desc">
-                {(product.desc || '').split('\n').map((line, idx) => (
-                  <React.Fragment key={idx}>
-                    {line}
-                    <br />
-                  </React.Fragment>
-                ))}
-              </p>
+              <div className="product-desc" style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginTop: '0.5rem' }}>
+                {(product.desc || '').split('\n').map((line, idx) => {
+                  if (line.includes('Batería')) {
+                    return (
+                      <span key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <BatteryCharging size={14} color="#A855F7" /> {line}
+                      </span>
+                    );
+                  }
+                  if (line.includes('Color')) {
+                    return (
+                      <span key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <Palette size={14} color="#A855F7" /> {line}
+                      </span>
+                    );
+                  }
+                  return (
+                    <span key={idx} style={{ paddingLeft: '1.2rem' }}>
+                      {line}
+                    </span>
+                  );
+                })}
+              </div>
             </div>
           ))}
         </div>
@@ -370,16 +424,20 @@ function App() {
               <div className="modal-info-section">
                 <h2 className="modal-title">{selectedProduct.name}</h2>
 
-                <div className="modal-badges">
+                <div className="modal-badges" style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
                   {selectedProduct.condition && (
-                    <div className="modal-badge">Estado: {selectedProduct.condition}</div>
+                    <div className="modal-badge" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <Sparkles size={14} color="#A855F7" /> Estado: {selectedProduct.condition}
+                    </div>
                   )}
                   {selectedProduct.batteryHealth && (
-                    <div className="modal-badge">Batería: {selectedProduct.batteryHealth}</div>
+                    <div className="modal-badge" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      <BatteryCharging size={14} color="#A855F7" /> {selectedProduct.batteryHealth}
+                    </div>
                   )}
                   {selectedProduct.sold && (
-                    <div className="modal-badge" style={{ backgroundColor: 'rgba(217, 45, 32, 0.1)', color: '#d92d20', borderColor: 'transparent' }}>
-                      VENDIDO
+                    <div className="modal-badge" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', backgroundColor: 'rgba(217, 45, 32, 0.1)', color: '#d92d20', borderColor: 'transparent' }}>
+                      <XCircle size={14} /> VENDIDO
                     </div>
                   )}
                 </div>
@@ -440,10 +498,70 @@ function App() {
                     <p style={{ color: 'var(--text-secondary)' }}>{selectedProduct.desc}</p>
                   </div>
                 )}
+
+                <a 
+                  href={`https://wa.me/5493549597237?text=Hola!%20Me%20interesa%20el%20${encodeURIComponent(selectedProduct.name)}`} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.8rem',
+                    background: '#25D366',
+                    color: '#fff',
+                    padding: '1rem',
+                    borderRadius: '12px',
+                    textDecoration: 'none',
+                    fontWeight: 600,
+                    marginTop: '2rem',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '1.05rem',
+                    boxShadow: '0 4px 15px rgba(37,211,102,0.25)',
+                    transition: 'transform 0.2s ease, opacity 0.2s ease'
+                  }}
+                  onMouseOver={(e) => { e.currentTarget.style.opacity = '0.9'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseOut={(e) => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                >
+                  <MessageCircle size={24} />
+                  Consultar por WhatsApp
+                </a>
               </div>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Floating WhatsApp Button */}
+      {view === 'store' && (
+        <a 
+          href="https://wa.me/5493549597237"
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            right: '2rem',
+            width: '60px',
+            height: '60px',
+            backgroundColor: '#25D366',
+            color: '#ffffff',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 8px 24px rgba(37,211,102,0.4)',
+            zIndex: 900,
+            transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            transform: showFloatingButton ? 'scale(1) translateY(0)' : 'scale(0) translateY(20px)',
+            opacity: showFloatingButton ? 1 : 0,
+            pointerEvents: showFloatingButton ? 'auto' : 'none'
+          }}
+          onMouseOver={(e) => { e.currentTarget.style.transform = 'scale(1.1) translateY(-5px)'; }}
+          onMouseOut={(e) => { e.currentTarget.style.transform = showFloatingButton ? 'scale(1) translateY(0)' : 'scale(0) translateY(20px)'; }}
+        >
+          <MessageCircle size={32} />
+        </a>
       )}
     </>
   );

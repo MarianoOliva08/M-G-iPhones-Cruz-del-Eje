@@ -6,12 +6,12 @@
   --text-secondary: rgba(255, 255, 255, 0.5);
   --nav-bg: rgba(5, 5, 5, 0.6);
   --white: #ffffff;
-  --color-montivero-primary: #1FEDD2;
+  --color-montivero-primary: #A855F7;
   --color-montivero-dark: #000000;
   --color-montivero-apple-gray: rgba(255, 255, 255, 0.02);
   --radius-apple: 24px;
   --glass-border: rgba(255, 255, 255, 0.05);
-  --glass-border-hover: rgba(31, 237, 210, 0.3);
+  --glass-border-hover: rgba(168, 85, 247, 0.3);
 }
 
 * {
@@ -39,7 +39,7 @@ body::before {
   left: -10%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(31, 237, 210, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
   filter: blur(100px);
   z-index: -1;
   pointer-events: none;
@@ -52,7 +52,7 @@ body::after {
   right: -10%;
   width: 700px;
   height: 700px;
-  background: radial-gradient(circle, rgba(31, 237, 210, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 70%);
   filter: blur(120px);
   z-index: -1;
   pointer-events: none;
@@ -92,11 +92,15 @@ body::after {
   object-fit: contain;
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease;
   filter: brightness(0) invert(1);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .nav-logo-img:hover {
   transform: scale(1.04);
-  filter: brightness(0) invert(1) drop-shadow(0 0 14px rgba(31, 237, 210, 0.55));
+  filter: brightness(0) invert(1) drop-shadow(0 0 14px rgba(168, 85, 247, 0.55));
 }
 
 /* Left: nav links */
@@ -137,12 +141,12 @@ body::after {
   background-color: var(--color-montivero-primary) !important;
   color: #000 !important;
   font-weight: 700 !important;
-  box-shadow: 0 0 12px rgba(31, 237, 210, 0.25);
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
 }
 
 .nav-admin-btn:hover {
   background-color: var(--color-montivero-primary) !important;
-  box-shadow: 0 0 20px rgba(31, 237, 210, 0.45) !important;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.45) !important;
   transform: translateY(-1px);
 }
 
@@ -179,6 +183,7 @@ body::after {
   line-height: 1.1;
   background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.6) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -232,7 +237,7 @@ body::after {
 .category-item.active {
   background-color: var(--color-montivero-primary);
   color: var(--color-montivero-dark);
-  box-shadow: 0 0 20px rgba(31, 237, 210, 0.3);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
 }
 
 .category-icon {
@@ -303,7 +308,7 @@ body::after {
   left: 0;
   right: 0;
   height: 100%;
-  background: linear-gradient(180deg, transparent 50%, rgba(31,237,210,0.03) 100%);
+  background: radial-gradient(circle at 50% 120%, var(--card-color) 0%, transparent 60%);
   z-index: 0;
   opacity: 0;
   transition: opacity 0.4s ease;
@@ -312,12 +317,12 @@ body::after {
 
 .product-card:hover {
   transform: translateY(-8px);
-  border-color: var(--glass-border-hover);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(31, 237, 210, 0.1);
+  border-color: var(--card-color);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 10px 40px -15px var(--card-color);
 }
 
 .product-card:hover::before {
-  opacity: 1;
+  opacity: 0.15;
 }
 
 .product-image-wrapper {
@@ -391,9 +396,9 @@ body::after {
 }
 
 .product-new {
-  background: rgba(31, 237, 210, 0.1);
+  background: rgba(168, 85, 247, 0.1);
   color: var(--color-montivero-primary);
-  border: 1px solid rgba(31, 237, 210, 0.2);
+  border: 1px solid rgba(168, 85, 247, 0.2);
 }
 
 .product-sold {
@@ -480,7 +485,7 @@ body::after {
 }
 
 .about-icon-wrapper {
-  background-color: rgba(31, 237, 210, 0.1);
+  background-color: rgba(168, 85, 247, 0.1);
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -488,7 +493,7 @@ body::after {
   align-items: center;
   justify-content: center;
   margin-bottom: 2.5rem;
-  border: 1px solid rgba(31, 237, 210, 0.2);
+  border: 1px solid rgba(168, 85, 247, 0.2);
 }
 
 .about-description {
@@ -567,7 +572,7 @@ body::after {
   justify-content: center;
   font-size: 1.2rem;
   font-weight: 900;
-  box-shadow: 0 10px 20px rgba(31, 237, 210, 0.3);
+  box-shadow: 0 10px 20px rgba(168, 85, 247, 0.3);
 }
 
 .step-icon {
@@ -721,7 +726,7 @@ body::after {
 .contact-card:hover {
   transform: translateY(-5px);
   border-color: var(--glass-border-hover);
-  box-shadow: 0 10px 30px rgba(31,237,210,0.1);
+  box-shadow: 0 10px 30px rgba(168, 85, 247,0.1);
 }
 
 .whatsapp-card {

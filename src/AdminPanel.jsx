@@ -43,8 +43,8 @@ function Toast({ message, type, onClose }) {
   return (
     <div style={{
       position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 9999,
-      background: type === 'success' ? 'rgba(31,237,210,0.15)' : 'rgba(255,69,58,0.15)',
-      border: `1px solid ${type === 'success' ? 'rgba(31,237,210,0.4)' : 'rgba(255,69,58,0.4)'}`,
+      background: type === 'success' ? 'rgba(168, 85, 247,0.15)' : 'rgba(255,69,58,0.15)',
+      border: `1px solid ${type === 'success' ? 'rgba(168, 85, 247,0.4)' : 'rgba(255,69,58,0.4)'}`,
       backdropFilter: 'blur(16px)', borderRadius: '16px',
       padding: '1rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.8rem',
       color: '#fff', fontFamily: 'Inter, sans-serif', minWidth: '280px',
@@ -52,7 +52,7 @@ function Toast({ message, type, onClose }) {
       animation: 'slideInToast 0.3s cubic-bezier(0.175,0.885,0.32,1.275)'
     }}>
       {type === 'success'
-        ? <CheckCircle size={20} color="#1FEDD2" />
+        ? <CheckCircle size={20} color="#A855F7" />
         : <AlertCircle size={20} color="#ff453a" />}
       <span style={{ fontWeight: 500 }}>{message}</span>
       <button onClick={onClose} style={{ marginLeft: 'auto', background: 'none', border: 'none', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', padding: 0 }}>
@@ -87,7 +87,7 @@ function LoginScreen({ onLogin, onExit }) {
       background: '#050505', fontFamily: 'Inter, sans-serif', position: 'relative', overflow: 'hidden'
     }}>
       {/* Background glow */}
-      <div style={{ position: 'fixed', top: '20%', left: '50%', transform: 'translateX(-50%)', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(31,237,210,0.06) 0%, transparent 70%)', filter: 'blur(80px)', pointerEvents: 'none' }} />
+      <div style={{ position: 'fixed', top: '20%', left: '50%', transform: 'translateX(-50%)', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(168, 85, 247,0.06) 0%, transparent 70%)', filter: 'blur(80px)', pointerEvents: 'none' }} />
 
       <div style={{
         width: '100%', maxWidth: '400px', padding: '3rem',
@@ -103,8 +103,8 @@ function LoginScreen({ onLogin, onExit }) {
           style={{ height: '60px', marginBottom: '2rem', filter: 'brightness(0) invert(1)' }}
         />
 
-        <div style={{ width: '64px', height: '64px', background: 'rgba(31,237,210,0.1)', border: '1px solid rgba(31,237,210,0.2)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
-          <Lock size={28} color="#1FEDD2" />
+        <div style={{ width: '64px', height: '64px', background: 'rgba(168, 85, 247,0.1)', border: '1px solid rgba(168, 85, 247,0.2)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+          <Lock size={28} color="#A855F7" />
         </div>
 
         <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#fff', margin: '0 0 0.5rem', letterSpacing: '-0.03em' }}>Panel Admin</h1>
@@ -139,10 +139,10 @@ function LoginScreen({ onLogin, onExit }) {
 
           <button type="submit" style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-            background: '#1FEDD2', color: '#000', border: 'none',
+            background: '#A855F7', color: '#000', border: 'none',
             padding: '1rem', borderRadius: '14px', fontSize: '1rem', fontWeight: 800,
             cursor: 'pointer', letterSpacing: '0.02em',
-            boxShadow: '0 0 20px rgba(31,237,210,0.25)', transition: 'all 0.3s ease'
+            boxShadow: '0 0 20px rgba(168, 85, 247,0.25)', transition: 'all 0.3s ease'
           }}>
             <Lock size={18} /> Entrar al Panel
           </button>
@@ -242,19 +242,19 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
               onDragStart={e => handleDragStart(e, idx)}
               onDrop={e => handleDrop(e, idx)}
               onDragOver={e => e.preventDefault()}
-              style={{ position: 'relative', width: '90px', height: '90px', borderRadius: '10px', overflow: 'hidden', cursor: 'grab', border: idx === 0 ? '2px solid #1FEDD2' : '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}
+              style={{ position: 'relative', width: '90px', height: '90px', borderRadius: '10px', overflow: 'hidden', cursor: 'grab', border: idx === 0 ? '2px solid #A855F7' : '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}
             >
               <img src={img} alt={`Foto ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               <button type="button" onClick={() => removeImage(idx)} style={{ position: 'absolute', top: 3, right: 3, background: 'rgba(0,0,0,0.7)', color: '#fff', border: 'none', borderRadius: '50%', width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
                 <X size={12} />
               </button>
-              {idx === 0 && <span style={{ position: 'absolute', bottom: 3, left: 3, background: '#1FEDD2', color: '#000', fontSize: '0.6rem', fontWeight: 800, padding: '1px 5px', borderRadius: '4px' }}>PORTADA</span>}
+              {idx === 0 && <span style={{ position: 'absolute', bottom: 3, left: 3, background: '#A855F7', color: '#000', fontSize: '0.6rem', fontWeight: 800, padding: '1px 5px', borderRadius: '4px' }}>PORTADA</span>}
             </div>
           ))}
 
           {currentImages.length < 10 && (
-            <label style={{ width: currentImages.length === 0 ? '100%' : '90px', height: currentImages.length === 0 ? '140px' : '90px', border: '1px dashed rgba(31,237,210,0.3)', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: '0.4rem', background: 'rgba(31,237,210,0.03)', transition: 'background 0.2s', flexShrink: 0 }}>
-              <ImagePlus size={22} color="#1FEDD2" />
+            <label style={{ width: currentImages.length === 0 ? '100%' : '90px', height: currentImages.length === 0 ? '140px' : '90px', border: '1px dashed rgba(168, 85, 247,0.3)', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: '0.4rem', background: 'rgba(168, 85, 247,0.03)', transition: 'background 0.2s', flexShrink: 0 }}>
+              <ImagePlus size={22} color="#A855F7" />
               <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center', lineHeight: 1.3 }}>{currentImages.length === 0 ? 'Agregar fotos' : 'Más'}</span>
               <input ref={fileRef} type="file" multiple accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
             </label>
@@ -304,8 +304,8 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
 
       {/* iPhone specs */}
       {activeCategory === 'iphones' && (
-        <div style={{ background: 'rgba(31,237,210,0.03)', border: '1px solid rgba(31,237,210,0.1)', borderRadius: '16px', padding: '1.5rem' }}>
-          <h3 style={{ margin: '0 0 1.5rem', color: '#1FEDD2', fontSize: '0.95rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>⚙️ Especificaciones Técnicas</h3>
+        <div style={{ background: 'rgba(168, 85, 247,0.03)', border: '1px solid rgba(168, 85, 247,0.1)', borderRadius: '16px', padding: '1.5rem' }}>
+          <h3 style={{ margin: '0 0 1.5rem', color: '#A855F7', fontSize: '0.95rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>⚙️ Especificaciones Técnicas</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem' }}>
             {Object.keys(defaultIphoneSpecs).map(key => (
               <div key={key}>
@@ -338,7 +338,7 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
         <button type="button" onClick={onCancel} style={{ padding: '0.9rem 1.8rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem' }}>
           Cancelar
         </button>
-        <button type="submit" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.9rem 2rem', borderRadius: '12px', border: 'none', background: '#1FEDD2', color: '#000', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '1rem', boxShadow: '0 0 20px rgba(31,237,210,0.3)' }}>
+        <button type="submit" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.9rem 2rem', borderRadius: '12px', border: 'none', background: '#A855F7', color: '#000', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '1rem', boxShadow: '0 0 20px rgba(168, 85, 247,0.3)' }}>
           <Save size={18} /> Guardar Producto
         </button>
       </div>
@@ -444,7 +444,7 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
   return (
     <div style={{ minHeight: '100vh', background: '#050505', fontFamily: 'Inter, sans-serif', color: '#fff' }}>
       {/* Background glow */}
-      <div style={{ position: 'fixed', top: '-10%', right: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(31,237,210,0.05) 0%, transparent 70%)', filter: 'blur(100px)', pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'fixed', top: '-10%', right: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(168, 85, 247,0.05) 0%, transparent 70%)', filter: 'blur(100px)', pointerEvents: 'none', zIndex: 0 }} />
 
       {/* Header */}
       <div style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(5,5,5,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
@@ -454,8 +454,8 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
               <ArrowLeft size={16} /> Tienda
             </button>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-              <div style={{ width: '36px', height: '36px', background: 'rgba(31,237,210,0.1)', border: '1px solid rgba(31,237,210,0.2)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Database size={18} color="#1FEDD2" />
+              <div style={{ width: '36px', height: '36px', background: 'rgba(168, 85, 247,0.1)', border: '1px solid rgba(168, 85, 247,0.2)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Database size={18} color="#A855F7" />
               </div>
               <div>
                 <div style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '-0.02em' }}>Panel de Administración</div>
@@ -486,7 +486,7 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
               <button onClick={handleSeed} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem' }}>
                 Actualizar DB
               </button>
-              <button onClick={startCreate} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#1FEDD2', color: '#000', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '0.95rem', boxShadow: '0 0 20px rgba(31,237,210,0.25)' }}>
+              <button onClick={startCreate} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#A855F7', color: '#000', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '0.95rem', boxShadow: '0 0 20px rgba(168, 85, 247,0.25)' }}>
                 <Plus size={18} /> Nuevo Producto rey
               </button>
               </>
@@ -504,7 +504,7 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
               const Icon = CATEGORY_ICONS[cat] || Package;
               const isActive = activeCategory === cat;
               return (
-                <button key={cat} onClick={() => setActiveCategory(cat)} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.6rem 1.2rem', borderRadius: '14px', border: 'none', background: isActive ? '#1FEDD2' : 'transparent', color: isActive ? '#000' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.9rem', transition: 'all 0.3s' }}>
+                <button key={cat} onClick={() => setActiveCategory(cat)} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.6rem 1.2rem', borderRadius: '14px', border: 'none', background: isActive ? '#A855F7' : 'transparent', color: isActive ? '#000' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.9rem', transition: 'all 0.3s' }}>
                   <Icon size={16} />
                   <span>{CATEGORY_LABELS[cat] || cat}</span>
                   <span style={{ background: isActive ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.08)', borderRadius: '100px', padding: '1px 7px', fontSize: '0.75rem', fontWeight: 800 }}>
@@ -522,7 +522,7 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
               <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em' }}>
                 {creating ? '➕ Nuevo Producto' : '✏️ Editar Producto'}
-                <span style={{ marginLeft: '0.8rem', fontSize: '0.8rem', fontWeight: 600, color: '#1FEDD2', background: 'rgba(31,237,210,0.1)', padding: '3px 10px', borderRadius: '100px', verticalAlign: 'middle' }}>
+                <span style={{ marginLeft: '0.8rem', fontSize: '0.8rem', fontWeight: 600, color: '#A855F7', background: 'rgba(168, 85, 247,0.1)', padding: '3px 10px', borderRadius: '100px', verticalAlign: 'middle' }}>
                   {CATEGORY_LABELS[activeCategory]}
                 </span>
               </h2>
@@ -546,7 +546,7 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
               <div style={{ textAlign: 'center', padding: '5rem 2rem', background: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.08)', borderRadius: '24px' }}>
                 <Package size={48} color="rgba(255,255,255,0.15)" style={{ marginBottom: '1rem' }} />
                 <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '1.1rem', margin: 0 }}>No hay productos en esta categoría.</p>
-                <button onClick={startCreate} style={{ marginTop: '1.5rem', background: '#1FEDD2', color: '#000', border: 'none', padding: '0.8rem 2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800 }}>
+                <button onClick={startCreate} style={{ marginTop: '1.5rem', background: '#A855F7', color: '#000', border: 'none', padding: '0.8rem 2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800 }}>
                   Agregar el primero
                 </button>
               </div>
@@ -567,7 +567,7 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
                         </div>
                       )}
                       {product.isNew && !product.sold && (
-                        <span style={{ position: 'absolute', top: '0.8rem', left: '0.8rem', background: '#1FEDD2', color: '#000', padding: '2px 8px', borderRadius: '100px', fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.1em' }}>NUEVO</span>
+                        <span style={{ position: 'absolute', top: '0.8rem', left: '0.8rem', background: '#A855F7', color: '#000', padding: '2px 8px', borderRadius: '100px', fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.1em' }}>NUEVO</span>
                       )}
                     </div>
 
@@ -577,7 +577,7 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
                         <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '100px' }}>{product.condition || 'Usado'}</span>
                         {product.batteryHealth && <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '100px' }}>🔋 {product.batteryHealth}</span>}
-                        {product.price && <span style={{ fontSize: '0.8rem', color: '#1FEDD2', fontWeight: 700 }}>${Number(product.price).toLocaleString('es-AR')}</span>}
+                        {product.price && <span style={{ fontSize: '0.8rem', color: '#A855F7', fontWeight: 700 }}>${Number(product.price).toLocaleString('es-AR')}</span>}
                       </div>
 
                       <div style={{ display: 'flex', gap: '0.6rem' }}>
