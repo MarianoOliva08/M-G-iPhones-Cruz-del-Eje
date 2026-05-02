@@ -222,6 +222,11 @@ function App() {
                 {product.sold && <div className="product-sold">Vendido</div>}
               </div>
               <h3 className="product-title">{product.name}</h3>
+              {product.price ? (
+                <div style={{ fontSize: '1.2rem', fontWeight: 700, color: '#A855F7', marginTop: '0.2rem' }}>
+                  ${Number(product.price).toLocaleString('es-AR')}
+                </div>
+              ) : null}
               <div className="product-desc" style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', marginTop: '0.5rem' }}>
                 {(product.desc || '').split('\n').map((line, idx) => {
                   if (line.includes('Batería')) {
@@ -411,6 +416,12 @@ function App() {
 
               <div className="modal-info-section">
                 <h2 className="modal-title">{selectedProduct.name}</h2>
+
+                {selectedProduct.price ? (
+                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#A855F7', marginBottom: '1rem', marginTop: '-0.5rem' }}>
+                    ${Number(selectedProduct.price).toLocaleString('es-AR')}
+                  </div>
+                ) : null}
 
                 <div className="modal-badges" style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
                   {selectedProduct.condition && (
