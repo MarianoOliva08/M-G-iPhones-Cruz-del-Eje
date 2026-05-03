@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Plus, Edit2, Trash2, Save, X, ImagePlus, Lock, Eye, EyeOff, Package, Smartphone, Shield, Zap, Maximize, CheckCircle, AlertCircle, Database } from 'lucide-react';
+import { ArrowLeft, Plus, Edit2, Trash2, Save, X, ImagePlus, Lock, Eye, EyeOff, Package, Smartphone, Shield, Zap, Maximize, CheckCircle, AlertCircle, Database, Calculator } from 'lucide-react';
 import logoMM from './assets/logo-white-apple-removebg-preview.png';
 import { supabase } from './supabase';
 
@@ -509,9 +509,139 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
   );
 }
 
+// ── Trade-In Calculator ──────────────────────────────────────────────────────
+const TRADE_IN_DATA = [
+  { model: 'iPhone 11', buy: 110, sell: 175 },
+  { model: 'iPhone 12', buy: 200, sell: 260 },
+  { model: 'iPhone 13', buy: 310, sell: 375 },
+  { model: 'iPhone 13 Pro', buy: 400, sell: 480 },
+  { model: 'iPhone 13 Pro Max', buy: 450, sell: 530 },
+  { model: 'iPhone 14', buy: 335, sell: 414 },
+  { model: 'iPhone 14 Plus', buy: 310, sell: 400 },
+  { model: 'iPhone 14 Pro', buy: 410, sell: 500 },
+  { model: 'iPhone 15', buy: 450, sell: 520 },
+  { model: 'iPhone 15 Pro', buy: 500, sell: 560 },
+  { model: 'iPhone 16', buy: 625, sell: 700 },
+  { model: 'iPhone 16 Pro', buy: 760, sell: 830 },
+  { model: 'iPhone 17', buy: 820, sell: 900 },
+  { model: 'iPhone 17 Pro', buy: 1235, sell: 1350 },
+  { model: 'iPhone 17 Pro Max', buy: 1430, sell: 1550 },
+];
+
+function TradeInCalculator() {
+  const [takeModel, setTakeModel] = useState('');
+  const [takePrice, setTakePrice] = useState('');
+
+  const [giveModel, setGiveModel] = useState('');
+  const [givePrice, setGivePrice] = useState('');
+
+  const handleTakeChange = (e) => {
+    const val = e.target.value;
+    setTakeModel(val);
+    const item = TRADE_IN_DATA.find(x => x.model === val);
+    if (item) setTakePrice(item.sell.toString());
+  };
+
+  const handleGiveChange = (e) => {
+    const val = e.target.value;
+    setGiveModel(val);
+    const item = TRADE_IN_DATA.find(x => x.model === val);
+    if (item) setGivePrice(item.buy.toString());
+  };
+
+  const diff = (Number(takePrice) || 0) - (Number(givePrice) || 0);
+
+  const inputStyle = {
+    width: '100%', padding: '0.85rem 1rem',
+    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+    borderRadius: '12px', color: '#fff', fontSize: '0.95rem',
+    outline: 'none', fontFamily: 'Inter, sans-serif',
+    boxSizing: 'border-box', transition: 'border-color 0.2s'
+  };
+
+  return (
+    <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '24px', padding: '3rem 2rem', maxWidth: '800px', margin: '0 auto', animation: 'slideInToast 0.4s ease' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '3rem' }}>
+        <div style={{ width: '48px', height: '48px', background: 'rgba(168, 85, 247,0.1)', border: '1px solid rgba(168, 85, 247,0.2)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Calculator size={24} color="#A855F7" />
+        </div>
+        <h2 style={{ fontSize: '2rem', fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.03em' }}>Calculadora de Canjes</h2>
+      </div>
+      
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
+        {/* Se lleva */}
+        <div style={{ background: 'rgba(168, 85, 247,0.05)', border: '1px solid rgba(168, 85, 247,0.2)', padding: '1.5rem', borderRadius: '16px' }}>
+          <h3 style={{ color: '#A855F7', fontSize: '1.1rem', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ background: '#A855F7', color: '#000', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontSize: '0.8rem' }}>1</span>
+            El cliente SE LLEVA
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem', fontWeight: 600 }}>Modelo (Precio Venta)</label>
+              <select style={{...inputStyle, cursor: 'pointer'}} value={takeModel} onChange={handleTakeChange}>
+                <option value="">-- Seleccionar equipo --</option>
+                {TRADE_IN_DATA.map(x => <option key={`take-${x.model}`} value={x.model}>{x.model}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem', fontWeight: 600 }}>Valor de venta (USD)</label>
+              <div style={{ position: 'relative' }}>
+                <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>$</span>
+                <input type="number" style={{...inputStyle, paddingLeft: '2.5rem', color: '#A855F7', fontWeight: 800, fontSize: '1.1rem'}} value={takePrice} onChange={e => setTakePrice(e.target.value)} placeholder="0" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Entrega */}
+        <div style={{ background: 'rgba(255, 69, 58, 0.05)', border: '1px solid rgba(255, 69, 58, 0.2)', padding: '1.5rem', borderRadius: '16px' }}>
+          <h3 style={{ color: '#ff453a', fontSize: '1.1rem', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ background: '#ff453a', color: '#fff', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontSize: '0.8rem' }}>2</span>
+            El cliente ENTREGA
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem', fontWeight: 600 }}>Modelo (Precio Mayorista)</label>
+              <select style={{...inputStyle, cursor: 'pointer'}} value={giveModel} onChange={handleGiveChange}>
+                <option value="">-- Seleccionar equipo --</option>
+                {TRADE_IN_DATA.map(x => <option key={`give-${x.model}`} value={x.model}>{x.model}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem', fontWeight: 600 }}>Valor de toma (USD)</label>
+              <div style={{ position: 'relative' }}>
+                <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>$</span>
+                <input type="number" style={{...inputStyle, paddingLeft: '2.5rem', color: '#ff453a', fontWeight: 800, fontSize: '1.1rem'}} value={givePrice} onChange={e => setGivePrice(e.target.value)} placeholder="0" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ background: 'rgba(255,255,255,0.03)', padding: '2.5rem 2rem', borderRadius: '20px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)', position: 'relative', overflow: 'hidden' }}>
+        {diff > 0 && <div style={{ position: 'absolute', top: '-50%', left: '50%', transform: 'translateX(-50%)', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(168, 85, 247,0.15) 0%, transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />}
+        
+        <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, marginBottom: '0.5rem', position: 'relative', zIndex: 1 }}>Diferencia a cobrar</div>
+        <div style={{ fontSize: '4.5rem', fontWeight: 900, color: diff > 0 ? '#A855F7' : (diff === 0 ? '#fff' : '#ff453a'), letterSpacing: '-0.04em', position: 'relative', zIndex: 1, lineHeight: 1 }}>
+          {diff > 0 ? '+' : ''}{diff} <span style={{ fontSize: '2rem', fontWeight: 700, opacity: 0.8 }}>USD</span>
+        </div>
+        <div style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.4)', marginTop: '1rem', fontWeight: 500, position: 'relative', zIndex: 1 }}>
+          ( {takePrice || 0} USD - {givePrice || 0} USD )
+        </div>
+      </div>
+      
+      <p style={{ textAlign: 'center', fontSize: '0.85rem', color: 'rgba(255,255,255,0.3)', marginTop: '2rem', lineHeight: 1.5 }}>
+        * Los precios pre-cargados son base (estimados). Podés modificarlos manualmente en los casilleros<br/>para ajustar el valor según batería, estado estético o accesorios.
+      </p>
+    </div>
+  );
+}
+
+
 // ── Main Admin Panel ──────────────────────────────────────────────────────────
 export default function AdminPanel({ dbData, fetchProducts, onExit }) {
   const [authed, setAuthed] = useState(false);
+  const [activeView, setActiveView] = useState('inventory'); // 'inventory', 'calculator'
   const [activeCategory, setActiveCategory] = useState('iphones');
   const [editing, setEditing] = useState(null);   // product obj or null
   const [creating, setCreating] = useState(false);
@@ -663,12 +793,17 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
 
             {!isFormOpen && (
               <>
-              <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'transparent', color: '#ff453a', border: '1px solid rgba(255,69,58,0.3)', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,69,58,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
-                Cerrar Sesión
+              <button onClick={() => setActiveView(activeView === 'calculator' ? 'inventory' : 'calculator')} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent', color: activeView === 'calculator' ? '#A855F7' : 'rgba(255,255,255,0.7)', border: `1px solid ${activeView === 'calculator' ? 'rgba(168, 85, 247, 0.4)' : 'rgba(255,255,255,0.1)'}`, padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.2)' : 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent'}>
+                <Calculator size={18} /> {activeView === 'calculator' ? 'Inventario' : 'Calculadora'}
               </button>
-              <button onClick={startCreate} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#A855F7', color: '#000', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '0.95rem', boxShadow: '0 0 20px rgba(168, 85, 247,0.25)' }}>
-                <Plus size={18} /> Nuevo Producto rey
+              <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'transparent', color: '#ff453a', border: '1px solid rgba(255,69,58,0.3)', padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,69,58,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                Salir
               </button>
+              {activeView === 'inventory' && (
+                <button onClick={startCreate} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#A855F7', color: '#000', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '0.95rem', boxShadow: '0 0 20px rgba(168, 85, 247,0.25)' }}>
+                  <Plus size={18} /> Nuevo Producto
+                </button>
+              )}
               </>
             )}
           </div>
@@ -677,8 +812,13 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
 
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem', position: 'relative', zIndex: 1 }}>
 
-        {/* Category Tabs */}
-        {!isFormOpen && (
+        {/* Main Content Area */}
+        {activeView === 'calculator' ? (
+          <TradeInCalculator />
+        ) : (
+          <>
+            {/* Category Tabs */}
+            {!isFormOpen && (
           <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px', padding: '0.5rem', width: 'fit-content' }}>
             {Object.keys(dbData).map(cat => {
               const Icon = CATEGORY_ICONS[cat] || Package;
