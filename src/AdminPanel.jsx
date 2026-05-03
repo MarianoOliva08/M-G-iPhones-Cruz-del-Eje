@@ -535,6 +535,29 @@ function TradeInCalculator() {
   const [giveModel, setGiveModel] = useState('');
   const [givePrice, setGivePrice] = useState('');
 
+  const [dollarPrice, setDollarPrice] = useState('');
+  const [loadingDollar, setLoadingDollar] = useState(false);
+
+  useEffect(() => {
+    const fetchDollar = async () => {
+      setLoadingDollar(true);
+      try {
+        const res = await fetch('https://dolarapi.com/v1/dolares/blue');
+        const data = await res.json();
+        // Tomamos el valor de venta y le sumamos un pequeño margen (aprox 10-15 pesos)
+        // ya que en el interior (Córdoba) suele ser un poco más caro que en CABA
+        if (data && data.venta) {
+          setDollarPrice(Math.round(data.venta + 10).toString());
+        }
+      } catch (err) {
+        console.error("Error fetching dollar:", err);
+      } finally {
+        setLoadingDollar(false);
+      }
+    };
+    fetchDollar();
+  }, []);
+
   const handleTakeChange = (e) => {
     const val = e.target.value;
     setTakeModel(val);
@@ -550,6 +573,7 @@ function TradeInCalculator() {
   };
 
   const diff = (Number(takePrice) || 0) - (Number(givePrice) || 0);
+  const diffArs = diff * (Number(dollarPrice) || 0);
 
   const inputStyle = {
     width: '100%', padding: '0.85rem 1rem',
@@ -561,11 +585,30 @@ function TradeInCalculator() {
 
   return (
     <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '24px', padding: '3rem 2rem', maxWidth: '800px', margin: '0 auto', animation: 'slideInToast 0.4s ease' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '3rem' }}>
-        <div style={{ width: '48px', height: '48px', background: 'rgba(168, 85, 247,0.1)', border: '1px solid rgba(168, 85, 247,0.2)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Calculator size={24} color="#A855F7" />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '3rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ width: '48px', height: '48px', background: 'rgba(168, 85, 247,0.1)', border: '1px solid rgba(168, 85, 247,0.2)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Calculator size={24} color="#A855F7" />
+          </div>
+          <h2 style={{ fontSize: '2rem', fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.03em' }}>Calculadora de Canjes</h2>
         </div>
-        <h2 style={{ fontSize: '2rem', fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.03em' }}>Calculadora de Canjes</h2>
+
+        {/* Cotización Dólar */}
+        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '0.8rem 1.2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.05em' }}>Cotización Dólar (CBA)</div>
+            <div style={{ fontSize: '0.8rem', color: '#A855F7', fontWeight: 600 }}>{loadingDollar ? 'Cargando...' : 'Blue Actualizado'}</div>
+          </div>
+          <div style={{ position: 'relative', width: '100px' }}>
+            <span style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', fontWeight: 800, fontSize: '0.9rem' }}>$</span>
+            <input 
+              type="number" 
+              value={dollarPrice} 
+              onChange={e => setDollarPrice(e.target.value)} 
+              style={{ ...inputStyle, padding: '0.5rem 0.5rem 0.5rem 1.8rem', fontSize: '1rem', fontWeight: 800, color: '#fff', textAlign: 'center' }}
+            />
+          </div>
+        </div>
       </div>
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
@@ -625,13 +668,24 @@ function TradeInCalculator() {
         <div style={{ fontSize: '4.5rem', fontWeight: 900, color: diff > 0 ? '#A855F7' : (diff === 0 ? '#fff' : '#ff453a'), letterSpacing: '-0.04em', position: 'relative', zIndex: 1, lineHeight: 1 }}>
           {diff > 0 ? '+' : ''}{diff} <span style={{ fontSize: '2rem', fontWeight: 700, opacity: 0.8 }}>USD</span>
         </div>
-        <div style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.4)', marginTop: '1rem', fontWeight: 500, position: 'relative', zIndex: 1 }}>
-          ( {takePrice || 0} USD - {givePrice || 0} USD )
+        
+        {diff !== 0 && (
+          <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '0.8rem', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', zIndex: 1 }}>
+            <span style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>En pesos:</span>
+            <span style={{ fontSize: '1.8rem', color: '#fff', fontWeight: 800 }}>
+              $ {Math.round(diffArs).toLocaleString('es-AR')}
+            </span>
+          </div>
+        )}
+
+        <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.3)', marginTop: '1.5rem', fontWeight: 500, position: 'relative', zIndex: 1 }}>
+          Cálculo: ( {takePrice || 0} USD - {givePrice || 0} USD ) × ${dollarPrice || 0}
         </div>
       </div>
       
       <p style={{ textAlign: 'center', fontSize: '0.85rem', color: 'rgba(255,255,255,0.3)', marginTop: '2rem', lineHeight: 1.5 }}>
-        * Los precios pre-cargados son base (estimados). Podés modificarlos manualmente en los casilleros<br/>para ajustar el valor según batería, estado estético o accesorios.
+        * La cotización del dólar se actualiza automáticamente (Blue + margen CBA). Podés modificarla manualmente.<br/>
+        Los precios pre-cargados son base y pueden ajustarse según el estado del equipo.
       </p>
     </div>
   );
