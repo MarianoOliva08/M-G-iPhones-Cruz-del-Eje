@@ -685,11 +685,6 @@ function TradeInCalculator() {
           Cálculo: ( {takePrice || 0} USD - {givePrice || 0} USD ) × ${dollarPrice || 0}
         </div>
       </div>
-
-      <p style={{ textAlign: 'center', fontSize: '0.85rem', color: 'rgba(255,255,255,0.3)', marginTop: '2rem', lineHeight: 1.5 }}>
-        * La cotización del dólar se actualiza automáticamente (Blue + margen CBA). Podés modificarla manualmente.<br />
-        Los precios pre-cargados son base y pueden ajustarse según el estado del equipo.
-      </p>
     </div>
   );
 }
