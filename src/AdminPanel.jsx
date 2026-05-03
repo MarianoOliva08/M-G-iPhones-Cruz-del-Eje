@@ -135,12 +135,12 @@ function LoginScreen({ onLogin, onExit }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: pass
     });
-    
+
     setLoading(false);
 
     if (error) {
@@ -271,7 +271,7 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
     const modelName = e.target.value;
     setSelectedTemplate(modelName);
     if (!modelName) return;
-    
+
     const template = IPHONE_CATALOG[modelName];
     setForm(p => ({
       ...p,
@@ -461,17 +461,17 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
                 <div key={key} style={key === 'camaraPrincipal' || key === 'pantalla' ? { gridColumn: '1 / -1' } : {}}>
                   <label style={labelStyle}>{SPEC_LABELS[key] || key}</label>
                   {key === 'almacenamiento' && template?.almacenamientoOpciones ? (
-                    <select style={{...inputStyle, cursor: 'pointer'}} value={form.specs?.[key] || ''} onChange={e => setSpec(key, e.target.value)}>
+                    <select style={{ ...inputStyle, cursor: 'pointer' }} value={form.specs?.[key] || ''} onChange={e => setSpec(key, e.target.value)}>
                       <option value="">Seleccionar...</option>
                       {template.almacenamientoOpciones.map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                   ) : key === 'bateria' && template?.bateriaOpciones ? (
-                    <select style={{...inputStyle, cursor: 'pointer'}} value={form.specs?.[key] || ''} onChange={e => setSpec(key, e.target.value)}>
+                    <select style={{ ...inputStyle, cursor: 'pointer' }} value={form.specs?.[key] || ''} onChange={e => setSpec(key, e.target.value)}>
                       <option value="">Seleccionar...</option>
                       {template.bateriaOpciones.map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                   ) : key === 'camaraPrincipal' || key === 'pantalla' ? (
-                    <textarea style={{...inputStyle, minHeight: '80px', resize: 'vertical', lineHeight: '1.4'}} value={form.specs?.[key] || ''} onChange={e => setSpec(key, e.target.value)} placeholder={`Ingresá ${SPEC_LABELS[key]?.toLowerCase()}`} />
+                    <textarea style={{ ...inputStyle, minHeight: '80px', resize: 'vertical', lineHeight: '1.4' }} value={form.specs?.[key] || ''} onChange={e => setSpec(key, e.target.value)} placeholder={`Ingresá ${SPEC_LABELS[key]?.toLowerCase()}`} />
                   ) : key === 'almacenamiento' ? (
                     <input style={inputStyle} value={form.specs?.[key] || ''} onChange={e => setSpec(key, e.target.value)} placeholder="Ej: 128 GB" />
                   ) : (
@@ -544,8 +544,6 @@ function TradeInCalculator() {
       try {
         const res = await fetch('https://dolarapi.com/v1/dolares/blue');
         const data = await res.json();
-        // Tomamos el valor de venta y le sumamos un pequeño margen (aprox 10-15 pesos)
-        // ya que en el interior (Córdoba) suele ser un poco más caro que en CABA
         if (data && data.venta) {
           setDollarPrice(Math.round(data.venta + 10).toString());
         }
@@ -601,16 +599,16 @@ function TradeInCalculator() {
           </div>
           <div style={{ position: 'relative', width: '100px' }}>
             <span style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', fontWeight: 800, fontSize: '0.9rem' }}>$</span>
-            <input 
-              type="number" 
-              value={dollarPrice} 
-              onChange={e => setDollarPrice(e.target.value)} 
+            <input
+              type="number"
+              value={dollarPrice}
+              onChange={e => setDollarPrice(e.target.value)}
               style={{ ...inputStyle, padding: '0.5rem 0.5rem 0.5rem 1.8rem', fontSize: '1rem', fontWeight: 800, color: '#fff', textAlign: 'center' }}
             />
           </div>
         </div>
       </div>
-      
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
         {/* Se lleva */}
         <div style={{ background: 'rgba(168, 85, 247,0.05)', border: '1px solid rgba(168, 85, 247,0.2)', padding: '1.5rem', borderRadius: '16px' }}>
@@ -621,7 +619,7 @@ function TradeInCalculator() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem', fontWeight: 600 }}>Modelo (Precio Venta)</label>
-              <select style={{...inputStyle, cursor: 'pointer'}} value={takeModel} onChange={handleTakeChange}>
+              <select style={{ ...inputStyle, cursor: 'pointer' }} value={takeModel} onChange={handleTakeChange}>
                 <option value="">-- Seleccionar equipo --</option>
                 {TRADE_IN_DATA.map(x => <option key={`take-${x.model}`} value={x.model}>{x.model}</option>)}
               </select>
@@ -630,7 +628,7 @@ function TradeInCalculator() {
               <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem', fontWeight: 600 }}>Valor de venta (USD)</label>
               <div style={{ position: 'relative' }}>
                 <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>$</span>
-                <input type="number" style={{...inputStyle, paddingLeft: '2.5rem', color: '#A855F7', fontWeight: 800, fontSize: '1.1rem'}} value={takePrice} onChange={e => setTakePrice(e.target.value)} placeholder="0" />
+                <input type="number" style={{ ...inputStyle, paddingLeft: '2.5rem', color: '#A855F7', fontWeight: 800, fontSize: '1.1rem' }} value={takePrice} onChange={e => setTakePrice(e.target.value)} placeholder="0" />
               </div>
             </div>
           </div>
@@ -645,7 +643,7 @@ function TradeInCalculator() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
               <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem', fontWeight: 600 }}>Modelo (Precio Mayorista)</label>
-              <select style={{...inputStyle, cursor: 'pointer'}} value={giveModel} onChange={handleGiveChange}>
+              <select style={{ ...inputStyle, cursor: 'pointer' }} value={giveModel} onChange={handleGiveChange}>
                 <option value="">-- Seleccionar equipo --</option>
                 {TRADE_IN_DATA.map(x => <option key={`give-${x.model}`} value={x.model}>{x.model}</option>)}
               </select>
@@ -654,7 +652,7 @@ function TradeInCalculator() {
               <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem', fontWeight: 600 }}>Valor de toma (USD)</label>
               <div style={{ position: 'relative' }}>
                 <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>$</span>
-                <input type="number" style={{...inputStyle, paddingLeft: '2.5rem', color: '#ff453a', fontWeight: 800, fontSize: '1.1rem'}} value={givePrice} onChange={e => setGivePrice(e.target.value)} placeholder="0" />
+                <input type="number" style={{ ...inputStyle, paddingLeft: '2.5rem', color: '#ff453a', fontWeight: 800, fontSize: '1.1rem' }} value={givePrice} onChange={e => setGivePrice(e.target.value)} placeholder="0" />
               </div>
             </div>
           </div>
@@ -663,12 +661,12 @@ function TradeInCalculator() {
 
       <div style={{ background: 'rgba(255,255,255,0.03)', padding: '2.5rem 2rem', borderRadius: '20px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)', position: 'relative', overflow: 'hidden' }}>
         {diff > 0 && <div style={{ position: 'absolute', top: '-50%', left: '50%', transform: 'translateX(-50%)', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(168, 85, 247,0.15) 0%, transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />}
-        
+
         <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, marginBottom: '0.5rem', position: 'relative', zIndex: 1 }}>Diferencia a cobrar</div>
         <div style={{ fontSize: '4.5rem', fontWeight: 900, color: diff > 0 ? '#A855F7' : (diff === 0 ? '#fff' : '#ff453a'), letterSpacing: '-0.04em', position: 'relative', zIndex: 1, lineHeight: 1 }}>
           {diff > 0 ? '+' : ''}{diff} <span style={{ fontSize: '2rem', fontWeight: 700, opacity: 0.8 }}>USD</span>
         </div>
-        
+
         {diff !== 0 && (
           <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '0.8rem', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', zIndex: 1 }}>
             <span style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>En pesos:</span>
@@ -682,9 +680,9 @@ function TradeInCalculator() {
           Cálculo: ( {takePrice || 0} USD - {givePrice || 0} USD ) × ${dollarPrice || 0}
         </div>
       </div>
-      
+
       <p style={{ textAlign: 'center', fontSize: '0.85rem', color: 'rgba(255,255,255,0.3)', marginTop: '2rem', lineHeight: 1.5 }}>
-        * La cotización del dólar se actualiza automáticamente (Blue + margen CBA). Podés modificarla manualmente.<br/>
+        * La cotización del dólar se actualiza automáticamente (Blue + margen CBA). Podés modificarla manualmente.<br />
         Los precios pre-cargados son base y pueden ajustarse según el estado del equipo.
       </p>
     </div>
