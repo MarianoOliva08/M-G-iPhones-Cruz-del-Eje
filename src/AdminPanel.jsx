@@ -528,6 +528,8 @@ const TRADE_IN_DATA = [
   { model: 'iPhone 17 Pro Max', buy: 1430, sell: 1550 },
 ];
 
+const TRADE_IN_MARGIN = 20; // Seguro de margen (USD) sobre precio mayorista
+
 function TradeInCalculator() {
   const [takeModel, setTakeModel] = useState('');
   const [takePrice, setTakePrice] = useState('');
@@ -567,7 +569,10 @@ function TradeInCalculator() {
     const val = e.target.value;
     setGiveModel(val);
     const item = TRADE_IN_DATA.find(x => x.model === val);
-    if (item) setGivePrice(item.buy.toString());
+    if (item) {
+      // Aplicamos el descuento de "seguro" sobre el precio de mayorista
+      setGivePrice((item.buy - TRADE_IN_MARGIN).toString());
+    }
   };
 
   const diff = (Number(takePrice) || 0) - (Number(givePrice) || 0);
@@ -642,14 +647,14 @@ function TradeInCalculator() {
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem', fontWeight: 600 }}>Modelo (Precio Mayorista)</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem', fontWeight: 600 }}>Modelo (Referencia Mayorista)</label>
               <select style={{ ...inputStyle, cursor: 'pointer' }} value={giveModel} onChange={handleGiveChange}>
                 <option value="">-- Seleccionar equipo --</option>
-                {TRADE_IN_DATA.map(x => <option key={`give-${x.model}`} value={x.model}>{x.model}</option>)}
+                {TRADE_IN_DATA.map(x => <option key={`give-${x.model}`} value={x.model}>{x.model} (${x.buy} USD)</option>)}
               </select>
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem', fontWeight: 600 }}>Valor de toma (USD)</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem', fontWeight: 600 }}>Valor de toma (Mayorista - ${TRADE_IN_MARGIN} USD)</label>
               <div style={{ position: 'relative' }}>
                 <span style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>$</span>
                 <input type="number" style={{ ...inputStyle, paddingLeft: '2.5rem', color: '#ff453a', fontWeight: 800, fontSize: '1.1rem' }} value={givePrice} onChange={e => setGivePrice(e.target.value)} placeholder="0" />
