@@ -943,3 +943,56 @@ body::after {
     max-height: 300px;
   }
 }
+
+/* Animations & Loading */
+@keyframes fadeInSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-animate-in {
+  opacity: 0;
+  animation: fadeInSlideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes pulseGlow {
+  0% { background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.02); }
+  50% { background-color: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.1); }
+  100% { background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.02); }
+}
+
+.skeleton-card {
+  border-radius: var(--radius-apple);
+  animation: pulseGlow 1.5s infinite ease-in-out;
+  border: 1px solid var(--glass-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.04),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    left: 200%;
+  }
+}

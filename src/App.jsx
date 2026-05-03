@@ -112,6 +112,43 @@ function App() {
     return <AdminPanel dbData={dbData} fetchProducts={fetchProducts} onExit={() => setView('store')} />;
   }
 
+  if (loading) {
+    return (
+      <div style={{ 
+        height: '100vh', 
+        width: '100vw', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        backgroundColor: 'var(--bg-color)',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: 9999
+      }}>
+        <img 
+          src={logoMM} 
+          alt="Cargando..." 
+          style={{ 
+            width: '120px', 
+            animation: 'pulseGlow 1.5s infinite ease-in-out', 
+            filter: 'brightness(0) invert(1)' 
+          }} 
+        />
+        <div style={{ 
+          marginTop: '2rem', 
+          color: 'var(--text-secondary)', 
+          fontSize: '0.9rem', 
+          fontWeight: 600, 
+          letterSpacing: '0.2em' 
+        }}>
+          CARGANDO
+        </div>
+      </div>
+    );
+  }
+
   const currentProducts = dbData[activeCategory] || [];
 
   const handleLogoClick = () => {
@@ -168,14 +205,14 @@ function App() {
         </div>
       </nav>
 
-      <header className="page-header">
+      <header className="page-header page-animate-in" style={{ animationDelay: '0.1s' }}>
         <h1 className="page-title">Actualizá tu mundo.</h1>
         <div className="page-subtitle">
           Encontrá el iPhone perfecto para vos. Equipos en estado impecable y accesorios premium en Cruz del Eje, Córdoba.
         </div>
       </header>
 
-      <section id="productos" className="category-container">
+      <section id="productos" className="category-container page-animate-in" style={{ animationDelay: '0.2s' }}>
         <div className="category-nav">
           <div className={`category-item ${activeCategory === 'iphones' ? 'active' : ''}`} onClick={() => setActiveCategory('iphones')}>
             <Smartphone className="category-icon" size={32} strokeWidth={1.5} />
@@ -196,13 +233,13 @@ function App() {
         </div>
       </section>
 
-      <section className="products-section">
+      <section className="products-section page-animate-in" style={{ animationDelay: '0.3s' }}>
         <div className="products-header">
           <h2>{categoryTitles[activeCategory]}</h2>
           <p>Explora nuestra selección de {activeCategory === 'iphones' ? 'dispositivos' : 'accesorios'} disponibles.</p>
         </div>
 
-        <div className="products-grid" style={{ justifyContent: currentProducts.length < 4 ? 'center' : 'space-between', gap: '3rem' }}>
+        <div className="products-grid" style={{ justifyContent: (currentProducts.length < 4) ? 'center' : 'space-between', gap: '3rem' }}>
           {currentProducts.map((product) => (
             <div className="product-card" key={product.id} style={{ flex: currentProducts.length < 4 ? '0 1 300px' : '1', '--card-color': (product.colors && product.colors.length > 0) ? product.colors[0] : 'var(--color-montivero-primary)' }} onClick={() => setSelectedProduct(product)}>
               <div className="product-image-wrapper">
@@ -255,7 +292,7 @@ function App() {
         </div>
       </section>
 
-      <section id="nosotros" className="about-section">
+      <section id="nosotros" className="about-section page-animate-in" style={{ animationDelay: '0.4s' }}>
         <div className="about-container">
           <h2>Sobre Nosotros</h2>
           <p className="about-subtitle">M&G iPhones CdE.</p>
@@ -271,7 +308,7 @@ function App() {
         </div>
       </section>
 
-      <section id="comprar" className="how-to-buy-section">
+      <section id="comprar" className="how-to-buy-section page-animate-in" style={{ animationDelay: '0.5s' }}>
         <div className="how-to-buy-container">
           <h2>Cómo Comprar</h2>
           <p>Un proceso simple y seguro para adquirir tu próximo dispositivo o accesorio.</p>
@@ -316,7 +353,7 @@ function App() {
         </div>
       </section>
 
-      <section id="envios" className="shipping-section">
+      <section id="envios" className="shipping-section page-animate-in" style={{ animationDelay: '0.6s' }}>
         <div className="shipping-container">
           <h2>Información de Envíos</h2>
           <p>Para brindarte mayor seguridad, hacemos entregas personalizadas. Así puedes recibir tus productos directo en tus manos.</p>
@@ -350,7 +387,7 @@ function App() {
       </section>
 
 
-      <section id="contacto" className="contact-section">
+      <section id="contacto" className="contact-section page-animate-in" style={{ animationDelay: '0.7s' }}>
         <div className="contact-container">
           <h2>Contáctanos</h2>
           <p>Estamos para ayudarte. Escríbenos y te responderemos a la brevedad.</p>
