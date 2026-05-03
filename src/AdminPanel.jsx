@@ -334,10 +334,10 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
 
   const inputStyle = {
     width: '100%', padding: '0.85rem 1rem',
-    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
     borderRadius: '12px', color: '#fff', fontSize: '0.95rem',
     outline: 'none', fontFamily: 'Inter, sans-serif',
-    boxSizing: 'border-box', transition: 'border-color 0.2s'
+    boxSizing: 'border-box', transition: 'all 0.2s'
   };
   const labelStyle = { display: 'block', fontWeight: 600, marginBottom: '0.5rem', color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.08em' };
 
@@ -553,10 +553,10 @@ function TradeInCalculator() {
 
   const inputStyle = {
     width: '100%', padding: '0.85rem 1rem',
-    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)',
+    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
     borderRadius: '12px', color: '#fff', fontSize: '0.95rem',
     outline: 'none', fontFamily: 'Inter, sans-serif',
-    boxSizing: 'border-box', transition: 'border-color 0.2s'
+    boxSizing: 'border-box', transition: 'all 0.2s'
   };
 
   return (
@@ -753,6 +753,17 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
 
   return (
     <div style={{ minHeight: '100vh', background: '#050505', fontFamily: 'Inter, sans-serif', color: '#fff' }}>
+      <style>{`
+        select option {
+          background-color: #111 !important;
+          color: white !important;
+          padding: 10px;
+        }
+        select:focus {
+          border-color: #A855F7 !important;
+          background: rgba(168, 85, 247, 0.05) !important;
+        }
+      `}</style>
       {/* Background glow */}
       <div style={{ position: 'fixed', top: '-10%', right: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(168, 85, 247,0.05) 0%, transparent 70%)', filter: 'blur(100px)', pointerEvents: 'none', zIndex: 0 }} />
 
