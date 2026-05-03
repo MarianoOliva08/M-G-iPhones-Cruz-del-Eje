@@ -793,17 +793,17 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
 
             {!isFormOpen && (
               <>
-              <button onClick={() => setActiveView(activeView === 'calculator' ? 'inventory' : 'calculator')} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent', color: activeView === 'calculator' ? '#A855F7' : 'rgba(255,255,255,0.7)', border: `1px solid ${activeView === 'calculator' ? 'rgba(168, 85, 247, 0.4)' : 'rgba(255,255,255,0.1)'}`, padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.2)' : 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent'}>
-                <Calculator size={18} /> {activeView === 'calculator' ? 'Inventario' : 'Calculadora'}
-              </button>
-              <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'transparent', color: '#ff453a', border: '1px solid rgba(255,69,58,0.3)', padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,69,58,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
-                Salir
-              </button>
-              {activeView === 'inventory' && (
-                <button onClick={startCreate} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#A855F7', color: '#000', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '0.95rem', boxShadow: '0 0 20px rgba(168, 85, 247,0.25)' }}>
-                  <Plus size={18} /> Nuevo Producto
+                <button onClick={() => setActiveView(activeView === 'calculator' ? 'inventory' : 'calculator')} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent', color: activeView === 'calculator' ? '#A855F7' : 'rgba(255,255,255,0.7)', border: `1px solid ${activeView === 'calculator' ? 'rgba(168, 85, 247, 0.4)' : 'rgba(255,255,255,0.1)'}`, padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.2)' : 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent'}>
+                  <Calculator size={18} /> {activeView === 'calculator' ? 'Inventario' : 'Calculadora'}
                 </button>
-              )}
+                <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'transparent', color: '#ff453a', border: '1px solid rgba(255,69,58,0.3)', padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,69,58,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                  Salir
+                </button>
+                {activeView === 'inventory' && (
+                  <button onClick={startCreate} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#A855F7', color: '#000', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '0.95rem', boxShadow: '0 0 20px rgba(168, 85, 247,0.25)' }}>
+                    <Plus size={18} /> Nuevo Producto
+                  </button>
+                )}
               </>
             )}
           </div>
@@ -811,7 +811,6 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
       </div>
 
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem', position: 'relative', zIndex: 1 }}>
-
         {/* Main Content Area */}
         {activeView === 'calculator' ? (
           <TradeInCalculator />
@@ -819,99 +818,101 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
           <>
             {/* Category Tabs */}
             {!isFormOpen && (
-          <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px', padding: '0.5rem', width: 'fit-content' }}>
-            {Object.keys(dbData).map(cat => {
-              const Icon = CATEGORY_ICONS[cat] || Package;
-              const isActive = activeCategory === cat;
-              return (
-                <button key={cat} onClick={() => setActiveCategory(cat)} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.6rem 1.2rem', borderRadius: '14px', border: 'none', background: isActive ? '#A855F7' : 'transparent', color: isActive ? '#000' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.9rem', transition: 'all 0.3s' }}>
-                  <Icon size={16} />
-                  <span>{CATEGORY_LABELS[cat] || cat}</span>
-                  <span style={{ background: isActive ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.08)', borderRadius: '100px', padding: '1px 7px', fontSize: '0.75rem', fontWeight: 800 }}>
-                    {(dbData[cat] || []).length}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Product Form */}
-        {isFormOpen && (
-          <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '24px', padding: '2rem', marginBottom: '2rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
-              <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em' }}>
-                {creating ? '➕ Nuevo Producto' : '✏️ Editar Producto'}
-                <span style={{ marginLeft: '0.8rem', fontSize: '0.8rem', fontWeight: 600, color: '#A855F7', background: 'rgba(168, 85, 247,0.1)', padding: '3px 10px', borderRadius: '100px', verticalAlign: 'middle' }}>
-                  {CATEGORY_LABELS[activeCategory]}
-                </span>
-              </h2>
-              <button onClick={cancelForm} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '0.5rem', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', display: 'flex', transition: 'all 0.2s' }}>
-                <X size={20} />
-              </button>
-            </div>
-            <ProductForm
-              product={creating ? emptyProduct() : { ...editing }}
-              activeCategory={activeCategory}
-              onSave={handleSave}
-              onCancel={cancelForm}
-            />
-          </div>
-        )}
-
-        {/* Products Grid */}
-        {!isFormOpen && (
-          <>
-            {currentProducts.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '5rem 2rem', background: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.08)', borderRadius: '24px' }}>
-                <Package size={48} color="rgba(255,255,255,0.15)" style={{ marginBottom: '1rem' }} />
-                <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '1.1rem', margin: 0 }}>No hay productos en esta categoría.</p>
-                <button onClick={startCreate} style={{ marginTop: '1.5rem', background: '#A855F7', color: '#000', border: 'none', padding: '0.8rem 2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800 }}>
-                  Agregar el primero
-                </button>
+              <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px', padding: '0.5rem', width: 'fit-content' }}>
+                {Object.keys(dbData).map(cat => {
+                  const Icon = CATEGORY_ICONS[cat] || Package;
+                  const isActive = activeCategory === cat;
+                  return (
+                    <button key={cat} onClick={() => setActiveCategory(cat)} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.6rem 1.2rem', borderRadius: '14px', border: 'none', background: isActive ? '#A855F7' : 'transparent', color: isActive ? '#000' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.9rem', transition: 'all 0.3s' }}>
+                      <Icon size={16} />
+                      <span>{CATEGORY_LABELS[cat] || cat}</span>
+                      <span style={{ background: isActive ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.08)', borderRadius: '100px', padding: '1px 7px', fontSize: '0.75rem', fontWeight: 800 }}>
+                        {(dbData[cat] || []).length}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
-            ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.2rem' }}>
-                {currentProducts.map(product => (
-                  <div key={product.id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px', overflow: 'hidden', transition: 'all 0.3s', position: 'relative' }}>
-                    {/* Product Image */}
-                    <div style={{ height: '180px', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-                      {product.image ? (
-                        <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: product.sold ? 0.4 : 0.9 }} />
-                      ) : (
-                        <Package size={48} color="rgba(255,255,255,0.1)" />
-                      )}
-                      {product.sold && (
-                        <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)' }}>
-                          <span style={{ background: '#ff453a', color: '#fff', padding: '0.4rem 1rem', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.1em' }}>VENDIDO</span>
-                        </div>
-                      )}
-                      {product.isNew && !product.sold && (
-                        <span style={{ position: 'absolute', top: '0.8rem', left: '0.8rem', background: '#A855F7', color: '#000', padding: '2px 8px', borderRadius: '100px', fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.1em' }}>NUEVO</span>
-                      )}
-                    </div>
+            )}
 
-                    {/* Product Info */}
-                    <div style={{ padding: '1.2rem' }}>
-                      <h3 style={{ margin: '0 0 0.4rem', fontWeight: 700, fontSize: '1rem', color: '#fff' }}>{product.name || 'Sin nombre'}</h3>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                        <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '100px' }}>{product.condition || 'Usado'}</span>
-                        {product.batteryHealth && <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '100px' }}>🔋 {product.batteryHealth}</span>}
-                        {product.price && <span style={{ fontSize: '0.8rem', color: '#A855F7', fontWeight: 700 }}>${Number(product.price).toLocaleString('es-AR')}</span>}
-                      </div>
+            {/* Product Form */}
+            {isFormOpen && (
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '24px', padding: '2rem', marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+                  <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em' }}>
+                    {creating ? '➕ Nuevo Producto' : '✏️ Editar Producto'}
+                    <span style={{ marginLeft: '0.8rem', fontSize: '0.8rem', fontWeight: 600, color: '#A855F7', background: 'rgba(168, 85, 247,0.1)', padding: '3px 10px', borderRadius: '100px', verticalAlign: 'middle' }}>
+                      {CATEGORY_LABELS[activeCategory]}
+                    </span>
+                  </h2>
+                  <button onClick={cancelForm} style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '0.5rem', color: 'rgba(255,255,255,0.5)', cursor: 'pointer', display: 'flex', transition: 'all 0.2s' }}>
+                    <X size={20} />
+                  </button>
+                </div>
+                <ProductForm
+                  product={creating ? emptyProduct() : { ...editing }}
+                  activeCategory={activeCategory}
+                  onSave={handleSave}
+                  onCancel={cancelForm}
+                />
+              </div>
+            )}
 
-                      <div style={{ display: 'flex', gap: '0.6rem' }}>
-                        <button onClick={() => startEdit(product)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '0.6rem', color: 'rgba(255,255,255,0.8)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.85rem', transition: 'all 0.2s' }}>
-                          <Edit2 size={14} /> Editar
-                        </button>
-                        <button onClick={() => setDeleteConfirm(product.id)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(255,69,58,0.08)', border: '1px solid rgba(255,69,58,0.2)', borderRadius: '10px', padding: '0.6rem 1rem', color: '#ff453a', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.85rem', transition: 'all 0.2s' }}>
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </div>
+            {/* Products Grid */}
+            {!isFormOpen && (
+              <>
+                {currentProducts.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '5rem 2rem', background: 'rgba(255,255,255,0.02)', border: '1px dashed rgba(255,255,255,0.08)', borderRadius: '24px' }}>
+                    <Package size={48} color="rgba(255,255,255,0.15)" style={{ marginBottom: '1rem' }} />
+                    <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '1.1rem', margin: 0 }}>No hay productos en esta categoría.</p>
+                    <button onClick={startCreate} style={{ marginTop: '1.5rem', background: '#A855F7', color: '#000', border: 'none', padding: '0.8rem 2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800 }}>
+                      Agregar el primero
+                    </button>
                   </div>
-                ))}
-              </div>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.2rem' }}>
+                    {currentProducts.map(product => (
+                      <div key={product.id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px', overflow: 'hidden', transition: 'all 0.3s', position: 'relative' }}>
+                        {/* Product Image */}
+                        <div style={{ height: '180px', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+                          {product.image ? (
+                            <img src={product.image} alt={product.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: product.sold ? 0.4 : 0.9 }} />
+                          ) : (
+                            <Package size={48} color="rgba(255,255,255,0.1)" />
+                          )}
+                          {product.sold && (
+                            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.5)' }}>
+                              <span style={{ background: '#ff453a', color: '#fff', padding: '0.4rem 1rem', borderRadius: '100px', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.1em' }}>VENDIDO</span>
+                            </div>
+                          )}
+                          {product.isNew && !product.sold && (
+                            <span style={{ position: 'absolute', top: '0.8rem', left: '0.8rem', background: '#A855F7', color: '#000', padding: '2px 8px', borderRadius: '100px', fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.1em' }}>NUEVO</span>
+                          )}
+                        </div>
+
+                        {/* Product Info */}
+                        <div style={{ padding: '1.2rem' }}>
+                          <h3 style={{ margin: '0 0 0.4rem', fontWeight: 700, fontSize: '1rem', color: '#fff' }}>{product.name || 'Sin nombre'}</h3>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                            <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '100px' }}>{product.condition || 'Usado'}</span>
+                            {product.batteryHealth && <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '100px' }}>🔋 {product.batteryHealth}</span>}
+                            {product.price && <span style={{ fontSize: '0.8rem', color: '#A855F7', fontWeight: 700 }}>${Number(product.price).toLocaleString('es-AR')}</span>}
+                          </div>
+
+                          <div style={{ display: 'flex', gap: '0.6rem' }}>
+                            <button onClick={() => startEdit(product)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '0.6rem', color: 'rgba(255,255,255,0.8)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.85rem', transition: 'all 0.2s' }}>
+                              <Edit2 size={14} /> Editar
+                            </button>
+                            <button onClick={() => setDeleteConfirm(product.id)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(255,69,58,0.08)', border: '1px solid rgba(255,69,58,0.2)', borderRadius: '10px', padding: '0.6rem 1rem', color: '#ff453a', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.85rem', transition: 'all 0.2s' }}>
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </>
         )}
