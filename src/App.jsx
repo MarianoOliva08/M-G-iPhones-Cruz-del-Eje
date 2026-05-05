@@ -123,7 +123,7 @@ function App() {
       document.body.style.overflow = 'unset';
     }
     
-    // Limpieza si el componente se desmonta mientras el modal está abierto
+    // Limpieza si el componente se desmonta mientras el y-- modal está abierto
     return () => {
       document.body.style.overflow = 'unset';
     };
