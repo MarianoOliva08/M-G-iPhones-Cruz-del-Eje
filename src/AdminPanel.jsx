@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Plus, Edit2, Trash2, Save, X, ImagePlus, Lock, Eye, EyeOff, Package, Smartphone, Shield, Zap, Maximize, CheckCircle, AlertCircle, Database, Calculator } from 'lucide-react';
+import { ArrowLeft, Plus, Edit2, Trash2, Save, X, ImagePlus, Lock, Eye, EyeOff, Package, Smartphone, Shield, Zap, Maximize, CheckCircle, AlertCircle, Database, Calculator, Layout, Table as TableIcon, TrendingUp } from 'lucide-react';
 import logoMM from './assets/logo-white-apple-removebg-preview.png';
 import { supabase } from './supabase';
 
@@ -520,7 +520,7 @@ const TRADE_IN_DATA = [
   { model: 'iPhone 14 Plus', buy: 310, sell: 400 },
   { model: 'iPhone 14 Pro', buy: 410, sell: 500 },
   { model: 'iPhone 15', buy: 450, sell: 520 },
-  { model: 'iPhone 15 Pro', buy: 500, sell: 560 },
+  { model: 'iPhone 15 Pro', buy: 530, sell: 560 },
   { model: 'iPhone 16', buy: 620, sell: 700 },
   { model: 'iPhone 16 Pro', buy: 730, sell: 830 },
   { model: 'iPhone 17', buy: 820, sell: 900 },
@@ -690,17 +690,157 @@ function TradeInCalculator() {
 }
 
 
+// ── Finances View (Excel Style) ──────────────────────────────────────────────
+function FinancesView({ products, dollarPrice }) {
+  const iphones = products.filter(p => !p.sold);
+  
+  const rows = iphones.map(p => {
+    // Try to find matching catalog data for cost
+    // We try to find the model name in the product name
+    const catalogItem = TRADE_IN_DATA.find(item => p.name.toLowerCase().includes(item.model.toLowerCase()));
+    
+    const cost = catalogItem ? catalogItem.buy : 0;
+    const sellArs = Number(p.price) || 0;
+    const sellUsd = dollarPrice > 0 ? Math.round(sellArs / dollarPrice) : 0;
+    
+    // If we have a sell price in USD from the user's prompt examples, we might prefer it, 
+    // but here we use the stored ARS price converted to USD.
+    
+    const profitUsd = sellUsd - cost;
+    const profitMargin = cost > 0 ? ((profitUsd / cost) * 100).toFixed(1) : 0;
+
+    return {
+      ...p,
+      cost,
+      sellUsd,
+      profitUsd,
+      profitMargin
+    };
+  });
+
+  const totalCost = rows.reduce((acc, r) => acc + r.cost, 0);
+  const totalSell = rows.reduce((acc, r) => acc + r.sellUsd, 0);
+  const totalProfit = rows.reduce((acc, r) => acc + r.profitUsd, 0);
+
+  const thStyle = {
+    padding: '1rem',
+    textAlign: 'left',
+    fontSize: '0.85rem',
+    fontWeight: 800,
+    color: 'rgba(255,255,255,0.4)',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    borderBottom: '1px solid rgba(255,255,255,0.1)'
+  };
+
+  const tdStyle = {
+    padding: '1rem',
+    fontSize: '0.95rem',
+    color: '#fff',
+    borderBottom: '1px solid rgba(255,255,255,0.03)',
+    fontWeight: 500
+  };
+
+  return (
+    <div style={{ animation: 'slideInToast 0.4s ease' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2.5rem' }}>
+        <div style={{ width: '48px', height: '48px', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.2)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <TableIcon size={24} color="#22c55e" />
+        </div>
+        <div>
+          <h2 style={{ fontSize: '2rem', fontWeight: 900, color: '#fff', margin: 0, letterSpacing: '-0.03em' }}>Balance de Inventario</h2>
+          <p style={{ color: 'rgba(255,255,255,0.4)', margin: 0 }}>Cálculos aproximados basados en precio mayorista y cotización de hoy</p>
+        </div>
+      </div>
+
+      {/* Summary Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
+        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', padding: '1.5rem', borderRadius: '20px' }}>
+          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem' }}>Inversión Total</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#fff' }}>{totalCost} <span style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.3)' }}>USD</span></div>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', padding: '1.5rem', borderRadius: '20px' }}>
+          <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem' }}>Venta Proyectada</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#fff' }}>{totalSell} <span style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.3)' }}>USD</span></div>
+        </div>
+        <div style={{ background: 'rgba(34, 197, 94, 0.05)', border: '1px solid rgba(34, 197, 94, 0.2)', padding: '1.5rem', borderRadius: '20px' }}>
+          <div style={{ color: '#22c55e', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem' }}>Ganancia Neta</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#22c55e' }}>+{totalProfit} <span style={{ fontSize: '1rem', opacity: 0.6 }}>USD</span></div>
+        </div>
+      </div>
+
+      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '24px', overflow: 'hidden' }}>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Producto</th>
+                <th style={thStyle}>Detalle</th>
+                <th style={thStyle}>Costo (USD)</th>
+                <th style={thStyle}>Venta (USD)</th>
+                <th style={thStyle}>Ganancia</th>
+                <th style={thStyle}>% Margen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((r, i) => (
+                <tr key={r.id} style={{ background: r.profitUsd < 0 ? 'rgba(255,69,58,0.05)' : (i % 2 === 0 ? 'transparent' : 'rgba(255,255,255,0.01)') }}>
+                  <td style={tdStyle}>
+                    <div style={{ fontWeight: 700 }}>{r.name}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)' }}>{r.condition}</div>
+                  </td>
+                  <td style={tdStyle}>
+                    {r.batteryHealth ? <span style={{ color: 'rgba(255,255,255,0.5)' }}>🔋 {r.batteryHealth}</span> : '-'}
+                  </td>
+                  <td style={tdStyle}>
+                    <span style={{ color: '#ff453a', fontWeight: 700 }}>${r.cost}</span>
+                  </td>
+                  <td style={tdStyle}>
+                    <span style={{ color: '#A855F7', fontWeight: 700 }}>${r.sellUsd}</span>
+                  </td>
+                  <td style={tdStyle}>
+                    <span style={{ color: r.profitUsd >= 0 ? '#22c55e' : '#ff453a', fontWeight: 800 }}>{r.profitUsd >= 0 ? '+' : ''}${r.profitUsd}</span>
+                  </td>
+                  <td style={tdStyle}>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: r.profitUsd >= 0 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(255,69,58,0.1)', color: r.profitUsd >= 0 ? '#22c55e' : '#ff453a', padding: '2px 8px', borderRadius: '100px', fontSize: '0.8rem', fontWeight: 800 }}>
+                      <TrendingUp size={12} style={{ transform: r.profitUsd >= 0 ? 'none' : 'rotate(180deg)' }} /> {r.profitMargin}%
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 // ── Main Admin Panel ──────────────────────────────────────────────────────────
 export default function AdminPanel({ dbData, fetchProducts, onExit }) {
   const [authed, setAuthed] = useState(false);
-  const [activeView, setActiveView] = useState('inventory'); // 'inventory', 'calculator'
-  const [activeCategory, setActiveCategory] = useState('iphones');
+   const [activeView, setActiveView] = useState('inventory'); // 'inventory', 'calculator', 'finances'
+   const [activeCategory, setActiveCategory] = useState('iphones');
+   const [dollarPrice, setDollarPrice] = useState('0');
   const [editing, setEditing] = useState(null);   // product obj or null
   const [creating, setCreating] = useState(false);
   const [toast, setToast] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null); // product id
 
-  useEffect(() => {
+    const fetchDollar = async () => {
+      try {
+        const res = await fetch('https://dolarapi.com/v1/dolares/blue');
+        const data = await res.json();
+        if (data && data.venta) {
+          setDollarPrice(Math.round(data.venta + 10).toString());
+        }
+      } catch (err) {
+        console.error("Error fetching dollar:", err);
+      }
+    };
+    fetchDollar();
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setAuthed(!!session);
     });
@@ -856,9 +996,12 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
 
             {!isFormOpen && (
               <>
-                <button onClick={() => setActiveView(activeView === 'calculator' ? 'inventory' : 'calculator')} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent', color: activeView === 'calculator' ? '#A855F7' : 'rgba(255,255,255,0.7)', border: `1px solid ${activeView === 'calculator' ? 'rgba(168, 85, 247, 0.4)' : 'rgba(255,255,255,0.1)'}`, padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.2)' : 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent'}>
-                  <Calculator size={18} /> {activeView === 'calculator' ? 'Inventario' : 'Calculadora'}
-                </button>
+                 <button onClick={() => setActiveView(activeView === 'calculator' ? 'inventory' : 'calculator')} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent', color: activeView === 'calculator' ? '#A855F7' : 'rgba(255,255,255,0.7)', border: `1px solid ${activeView === 'calculator' ? 'rgba(168, 85, 247, 0.4)' : 'rgba(255,255,255,0.1)'}`, padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.2)' : 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent'}>
+                   <Calculator size={18} /> {activeView === 'calculator' ? 'Inventario' : 'Calculadora'}
+                 </button>
+                 <button onClick={() => setActiveView(activeView === 'finances' ? 'inventory' : 'finances')} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: activeView === 'finances' ? 'rgba(34, 197, 94, 0.15)' : 'transparent', color: activeView === 'finances' ? '#22c55e' : 'rgba(255,255,255,0.7)', border: `1px solid ${activeView === 'finances' ? 'rgba(34, 197, 94, 0.4)' : 'rgba(255,255,255,0.1)'}`, padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = activeView === 'finances' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = activeView === 'finances' ? 'rgba(34, 197, 94, 0.15)' : 'transparent'}>
+                   <TableIcon size={18} /> {activeView === 'finances' ? 'Inventario' : 'Finanzas'}
+                 </button>
                 <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'transparent', color: '#ff453a', border: '1px solid rgba(255,69,58,0.3)', padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,69,58,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                   Salir
                 </button>
@@ -875,9 +1018,11 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
 
       <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem', position: 'relative', zIndex: 1 }}>
         {/* Main Content Area */}
-        {activeView === 'calculator' ? (
-          <TradeInCalculator />
-        ) : (
+         {activeView === 'calculator' ? (
+           <TradeInCalculator />
+         ) : activeView === 'finances' ? (
+           <FinancesView products={dbData.iphones || []} dollarPrice={Number(dollarPrice)} />
+         ) : (
           <>
             {/* Category Tabs */}
             {!isFormOpen && (
