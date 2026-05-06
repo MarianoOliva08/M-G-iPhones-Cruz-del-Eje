@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Plus, Edit2, Trash2, Save, X, ImagePlus, Lock, Eye, EyeOff, Package, Smartphone, Shield, Zap, Maximize, CheckCircle, AlertCircle, Database, Calculator, Layout, Table as TableIcon, TrendingUp, ExternalLink } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { ArrowLeft, Plus, Edit2, Trash2, Save, X, ImagePlus, Lock, Eye, EyeOff, Package, Smartphone, Shield, Zap, Maximize, CheckCircle, AlertCircle, Database, Calculator, Table as TableIcon, TrendingUp, ExternalLink } from 'lucide-react';
 import logoMM from './assets/logo-white-apple-removebg-preview.png';
 import { supabase } from './supabase';
 
-const DB_KEY = 'mg_iphones_db';
+
 
 const defaultIphoneSpecs = {
   pantalla: '', procesador: '', ram: '', almacenamiento: '',
@@ -136,7 +136,7 @@ function LoginScreen({ onLogin, onExit }) {
     e.preventDefault();
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email: email,
       password: pass
     });
@@ -903,37 +903,7 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
     showToast('Producto eliminado.', 'error');
   };
 
-  const handleSeed = async () => {
-    const allProducts = [];
-    Object.keys(dbData).forEach(cat => {
-      (dbData[cat] || []).forEach(prod => {
-        allProducts.push({
-          id: prod.id,
-          category: cat,
-          name: prod.name,
-          image: prod.image,
-          images: prod.images || [],
-          description: prod.desc || '',
-          condition: prod.condition,
-          battery_health: prod.batteryHealth,
-          price: prod.price ? parseFloat(prod.price) : null,
-          is_new: prod.isNew || false,
-          sold: prod.sold || false,
-          colors: prod.colors || [],
-          specs: prod.specs || {}
-        });
-      });
-    });
 
-    const { error } = await supabase.from('products').upsert(allProducts);
-    if (error) {
-      console.error(error);
-      showToast(`Error iniciales: ${error.message || 'Desconocido'}`, 'error');
-    } else {
-      await fetchProducts();
-      showToast('¡Todos tus productos fueron respaldados en la nube!');
-    }
-  };
 
   const startEdit = (product) => { setCreating(false); setEditing(product); };
   const startCreate = () => { setEditing(null); setCreating(true); };
