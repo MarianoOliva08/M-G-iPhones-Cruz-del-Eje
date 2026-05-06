@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ArrowLeft, Plus, Edit2, Trash2, Save, X, ImagePlus, Lock, Eye, EyeOff, Package, Smartphone, Shield, Zap, Maximize, CheckCircle, AlertCircle, Database, Calculator, Layout, Table as TableIcon, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Plus, Edit2, Trash2, Save, X, ImagePlus, Lock, Eye, EyeOff, Package, Smartphone, Shield, Zap, Maximize, CheckCircle, AlertCircle, Database, Calculator, Layout, Table as TableIcon, TrendingUp, ExternalLink } from 'lucide-react';
 import logoMM from './assets/logo-white-apple-removebg-preview.png';
 import { supabase } from './supabase';
 
@@ -828,6 +828,7 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
   const [toast, setToast] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null); // product id
 
+  useEffect(() => {
     const fetchDollar = async () => {
       try {
         const res = await fetch('https://dolarapi.com/v1/dolares/blue');
@@ -1002,6 +1003,11 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
                  <button onClick={() => setActiveView(activeView === 'finances' ? 'inventory' : 'finances')} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: activeView === 'finances' ? 'rgba(34, 197, 94, 0.15)' : 'transparent', color: activeView === 'finances' ? '#22c55e' : 'rgba(255,255,255,0.7)', border: `1px solid ${activeView === 'finances' ? 'rgba(34, 197, 94, 0.4)' : 'rgba(255,255,255,0.1)'}`, padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = activeView === 'finances' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = activeView === 'finances' ? 'rgba(34, 197, 94, 0.15)' : 'transparent'}>
                    <TableIcon size={18} /> {activeView === 'finances' ? 'Inventario' : 'Finanzas'}
                  </button>
+                 <a href="https://docs.google.com/spreadsheets/d/1NxaPijnAiEpxu0HJOwBBuazuS66bDGHPym5uMy_xzyc/edit?usp=sharing" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                   <button style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.1)', padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}>
+                     <ExternalLink size={18} /> Ver excel
+                   </button>
+                 </a>
                 <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'transparent', color: '#ff453a', border: '1px solid rgba(255,69,58,0.3)', padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,69,58,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                   Salir
                 </button>
