@@ -64,7 +64,12 @@ function App() {
     };
 
     if (data && data.length > 0) {
-      data.forEach(item => {
+      // Sort data by name and number
+      const sortedData = [...data].sort((a, b) => 
+        (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' })
+      );
+
+      sortedData.forEach(item => {
         const cat = item.category || 'iphones';
         if (!groupedData[cat]) groupedData[cat] = [];
         
@@ -239,9 +244,9 @@ function App() {
           <p>Explora nuestra selección de {activeCategory === 'iphones' ? 'dispositivos' : 'accesorios'} disponibles.</p>
         </div>
 
-        <div className="products-grid" style={{ justifyContent: (currentProducts.length < 4) ? 'center' : 'space-between', gap: '3rem' }}>
+        <div className="products-grid">
           {currentProducts.map((product) => (
-            <div className="product-card" key={product.id} style={{ flex: currentProducts.length < 4 ? '0 1 300px' : '1', '--card-color': (product.colors && product.colors.length > 0) ? product.colors[0] : 'var(--color-montivero-primary)' }} onClick={() => setSelectedProduct(product)}>
+            <div className="product-card" key={product.id} style={{ '--card-color': (product.colors && product.colors.length > 0) ? product.colors[0] : 'var(--color-montivero-primary)' }} onClick={() => setSelectedProduct(product)}>
               <div className="product-image-wrapper">
                 <img src={resolveAssetUrl(product.image)} alt={product.name} className="product-image" />
               </div>
