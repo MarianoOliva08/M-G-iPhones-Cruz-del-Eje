@@ -1002,3 +1002,321 @@ body::after {
     left: 200%;
   }
 }
+
+/* Admin panel mobile layout */
+.admin-shell {
+  overflow-x: hidden;
+}
+
+.admin-shell button,
+.admin-shell input,
+.admin-shell select,
+.admin-shell textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.admin-shell input,
+.admin-shell select,
+.admin-shell textarea {
+  max-width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .admin-header-inner {
+    align-items: stretch !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  .admin-header-actions {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+  }
+
+  .admin-header-actions a {
+    display: block !important;
+    min-width: 0 !important;
+  }
+
+  .admin-action-btn {
+    justify-content: center !important;
+    min-height: 44px !important;
+    width: 100% !important;
+    padding: 0.72rem 0.85rem !important;
+    white-space: nowrap !important;
+  }
+
+  .admin-header-gif {
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .admin-header-gif img {
+    width: 52px !important;
+    height: 40px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .admin-header-inner {
+    padding: 0.85rem 1rem !important;
+  }
+
+  .admin-title-group {
+    justify-content: space-between !important;
+    gap: 0.75rem !important;
+    min-width: 0 !important;
+  }
+
+  .admin-title-group > div:last-child,
+  .admin-title-group > div:last-child > div:last-child {
+    min-width: 0 !important;
+  }
+
+  .admin-title-group > div:last-child > div:last-child div:first-child {
+    font-size: 0.95rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .admin-title-group > div:last-child > div:last-child div:last-child {
+    font-size: 0.7rem !important;
+  }
+
+  .admin-back-btn {
+    flex-shrink: 0 !important;
+    min-height: 42px !important;
+    padding: 0.6rem 0.8rem !important;
+  }
+
+  .admin-header-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .admin-header-gif {
+    grid-column: 1 / -1 !important;
+    order: -1 !important;
+  }
+
+  .admin-new-btn {
+    grid-column: 1 / -1 !important;
+  }
+
+  .admin-container {
+    padding: 1rem !important;
+  }
+
+  .admin-tabs {
+    width: 100% !important;
+    overflow-x: auto !important;
+    gap: 0.4rem !important;
+    margin-bottom: 1rem !important;
+    border-radius: 16px !important;
+    scrollbar-width: none;
+  }
+
+  .admin-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-tab {
+    flex: 0 0 auto !important;
+    min-height: 42px !important;
+    padding: 0.55rem 0.85rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .admin-products-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .admin-product-card {
+    border-radius: 16px !important;
+  }
+
+  .admin-card-actions button {
+    min-height: 42px !important;
+  }
+
+  .admin-form-card {
+    padding: 1rem !important;
+    border-radius: 18px !important;
+  }
+
+  .admin-form-titlebar {
+    align-items: flex-start !important;
+    gap: 1rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .admin-form-titlebar h2 {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.55rem !important;
+    font-size: 1.2rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .admin-form-titlebar h2 span {
+    margin-left: 0 !important;
+  }
+
+  .admin-product-form {
+    gap: 1.25rem !important;
+  }
+
+  .admin-template-card,
+  .admin-spec-card {
+    padding: 1rem !important;
+    border-radius: 14px !important;
+  }
+
+  .admin-form-grid,
+  .admin-spec-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .admin-image-gallery {
+    gap: 0.5rem !important;
+    padding: 0.75rem !important;
+  }
+
+  .admin-image-thumb,
+  .admin-image-upload {
+    width: calc(33.333% - 0.34rem) !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+
+  .admin-image-upload[style*="100%"] {
+    width: 100% !important;
+    aspect-ratio: 16 / 9 !important;
+  }
+
+  .admin-color-picker {
+    gap: 0.65rem !important;
+  }
+
+  .admin-sold-toggle {
+    align-items: flex-start !important;
+    padding: 0.9rem !important;
+  }
+
+  .admin-form-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  .admin-form-actions button {
+    justify-content: center !important;
+    min-height: 44px !important;
+    width: 100% !important;
+  }
+
+  .admin-calculator {
+    padding: 1.25rem !important;
+    border-radius: 18px !important;
+  }
+
+  .admin-calculator-header,
+  .admin-section-title {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  .admin-calculator-header {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .admin-section-title {
+    gap: 0.8rem !important;
+  }
+
+  .admin-section-title h2 {
+    font-size: 1.45rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .admin-dollar-box {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+
+  .admin-trade-grid,
+  .admin-summary-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .admin-trade-result {
+    padding: 1.5rem 1rem !important;
+    border-radius: 16px !important;
+  }
+
+  .admin-trade-total {
+    font-size: 3rem !important;
+  }
+
+  .admin-trade-total span {
+    font-size: 1.25rem !important;
+  }
+
+  .admin-ars-result {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .admin-finances-title {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .admin-table-card {
+    border-radius: 16px !important;
+    margin-right: -1rem !important;
+    margin-left: -1rem !important;
+  }
+
+  .admin-finance-table {
+    min-width: 720px !important;
+  }
+
+  .admin-confirm-overlay {
+    align-items: flex-end !important;
+    padding: 1rem !important;
+  }
+
+  .admin-confirm-card {
+    max-width: none !important;
+    padding: 1.5rem !important;
+    border-radius: 20px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .admin-header-actions {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-action-btn {
+    white-space: normal !important;
+  }
+
+  .admin-image-thumb,
+  .admin-image-upload {
+    width: calc(50% - 0.25rem) !important;
+  }
+
+  .admin-title-group {
+    align-items: flex-start !important;
+  }
+
+  .admin-back-btn {
+    padding-inline: 0.65rem !important;
+  }
+}
