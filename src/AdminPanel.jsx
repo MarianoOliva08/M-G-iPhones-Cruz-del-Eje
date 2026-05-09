@@ -87,6 +87,55 @@ const CATEGORY_LABELS = {
   iphones: 'iPhones', fundas: 'Fundas', vidrios: 'Vidrios', cargadores: 'Cargadores'
 };
 
+const INFODOLAR_CORDOBA_URL = 'https://www.infodolar.com/cotizacion-dolar-provincia-cordoba.aspx';
+
+const parseArgentineCurrency = (value) => Number(value.replace(/\./g, '').replace(',', '.'));
+
+const fetchTextWithTimeout = async (url, timeoutMs = 6000) => {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+    return await response.text();
+  } finally {
+    clearTimeout(timeout);
+  }
+};
+
+const parseInfoDolarCordobaBlueSell = (html) => {
+  const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+  const start = text.search(/D[oó]lar Blue\s+en C[oó]rdoba/i);
+  if (start === -1) return null;
+
+  const section = text.slice(start, start + 450);
+  const values = [...section.matchAll(/\$\s*([\d.]+,\d{2})/g)]
+    .map(match => parseArgentineCurrency(match[1]))
+    .filter(value => value > 1000);
+
+  return values[1] || values[0] || null;
+};
+
+const fetchInfoDolarCordobaBlueSell = async () => {
+  const sources = [
+    `https://r.jina.ai/${INFODOLAR_CORDOBA_URL}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(INFODOLAR_CORDOBA_URL)}`,
+    INFODOLAR_CORDOBA_URL
+  ];
+
+  for (const url of sources) {
+    try {
+      const value = parseInfoDolarCordobaBlueSell(await fetchTextWithTimeout(url));
+      if (value) return value;
+    } catch (error) {
+      console.warn('InfoDolar source failed:', url, error);
+    }
+  }
+
+  throw new Error('No se encontró la cotización de Dólar Blue Córdoba');
+};
+
 const emptyProduct = () => ({
   id: `prod-${Date.now()}-${Math.random().toString(36).slice(2)}`,
   name: '', image: '', images: [], desc: '',
@@ -342,11 +391,11 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
   const labelStyle = { display: 'block', fontWeight: 600, marginBottom: '0.5rem', color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.08em' };
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}>
+    <form className="admin-product-form" onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}>
 
       {/* Template Selector for iPhones */}
       {activeCategory === 'iphones' && (
-        <div style={{ background: 'rgba(168, 85, 247,0.08)', border: '1px solid rgba(168, 85, 247,0.2)', padding: '1.2rem', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+        <div className="admin-template-card" style={{ background: 'rgba(168, 85, 247,0.08)', border: '1px solid rgba(168, 85, 247,0.2)', padding: '1.2rem', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#A855F7', fontWeight: 800 }}>
             <Zap size={18} /> Rellenar datos automáticamente
           </div>
@@ -362,13 +411,14 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
       {/* Image uploader */}
       <div>
         <label style={labelStyle}>Fotos del producto · {currentImages.length}/10</label>
-        <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '1rem', display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
+        <div className="admin-image-gallery" style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '1rem', display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
           {currentImages.map((img, idx) => (
             <div
               key={idx} draggable
               onDragStart={e => handleDragStart(e, idx)}
               onDrop={e => handleDrop(e, idx)}
               onDragOver={e => e.preventDefault()}
+              className="admin-image-thumb"
               style={{ position: 'relative', width: '90px', height: '90px', borderRadius: '10px', overflow: 'hidden', cursor: 'grab', border: idx === 0 ? '2px solid #A855F7' : '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}
             >
               <img src={img} alt={`Foto ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -380,7 +430,7 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
           ))}
 
           {currentImages.length < 10 && (
-            <label style={{ width: currentImages.length === 0 ? '100%' : '90px', height: currentImages.length === 0 ? '140px' : '90px', border: '1px dashed rgba(168, 85, 247,0.3)', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: '0.4rem', background: 'rgba(168, 85, 247,0.03)', transition: 'background 0.2s', flexShrink: 0 }}>
+            <label className="admin-image-upload" style={{ width: currentImages.length === 0 ? '100%' : '90px', height: currentImages.length === 0 ? '140px' : '90px', border: '1px dashed rgba(168, 85, 247,0.3)', borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', gap: '0.4rem', background: 'rgba(168, 85, 247,0.03)', transition: 'background 0.2s', flexShrink: 0 }}>
               <ImagePlus size={22} color="#A855F7" />
               <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', textAlign: 'center', lineHeight: 1.3 }}>{currentImages.length === 0 ? 'Agregar fotos' : 'Más'}</span>
               <input ref={fileRef} type="file" multiple accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
@@ -390,7 +440,7 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
       </div>
 
       {/* Basic info */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem' }}>
+      <div className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem' }}>
         <div style={{ gridColumn: '1 / -1' }}>
           <label style={labelStyle}>Nombre del producto</label>
           <input style={inputStyle} value={form.name} onChange={e => set('name', e.target.value)} placeholder="Ej: iPhone 15 Pro 128GB" />
@@ -421,7 +471,7 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
         <div style={{ gridColumn: '1 / -1' }}>
           <label style={labelStyle}>Colores disponibles en esta unidad</label>
           {selectedTemplate && IPHONE_CATALOG[selectedTemplate] ? (
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', padding: '0.8rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px' }}>
+            <div className="admin-color-picker" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', padding: '0.8rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px' }}>
               {IPHONE_CATALOG[selectedTemplate].colors.map(color => {
                 const isSelected = (form.colors || []).includes(color);
                 return (
@@ -452,9 +502,9 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
 
       {/* iPhone specs */}
       {activeCategory === 'iphones' && (
-        <div style={{ background: 'rgba(168, 85, 247,0.03)', border: '1px solid rgba(168, 85, 247,0.1)', borderRadius: '16px', padding: '1.5rem' }}>
+        <div className="admin-spec-card" style={{ background: 'rgba(168, 85, 247,0.03)', border: '1px solid rgba(168, 85, 247,0.1)', borderRadius: '16px', padding: '1.5rem' }}>
           <h3 style={{ margin: '0 0 1.5rem', color: '#A855F7', fontSize: '0.95rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>⚙️ Especificaciones Técnicas</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem' }}>
+          <div className="admin-spec-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem' }}>
             {Object.keys(defaultIphoneSpecs).map(key => {
               const template = selectedTemplate ? IPHONE_CATALOG[selectedTemplate] : null;
               return (
@@ -485,7 +535,7 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
       )}
 
       {/* Sold toggle */}
-      <label style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', padding: '1rem 1.2rem', background: form.sold ? 'rgba(255,69,58,0.08)' : 'rgba(255,255,255,0.02)', border: `1px solid ${form.sold ? 'rgba(255,69,58,0.3)' : 'rgba(255,255,255,0.06)'}`, borderRadius: '14px', transition: 'all 0.3s' }}>
+      <label className="admin-sold-toggle" style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', padding: '1rem 1.2rem', background: form.sold ? 'rgba(255,69,58,0.08)' : 'rgba(255,255,255,0.02)', border: `1px solid ${form.sold ? 'rgba(255,69,58,0.3)' : 'rgba(255,255,255,0.06)'}`, borderRadius: '14px', transition: 'all 0.3s' }}>
         <div style={{ width: '44px', height: '24px', background: form.sold ? '#ff453a' : 'rgba(255,255,255,0.15)', borderRadius: '100px', position: 'relative', transition: 'background 0.3s', flexShrink: 0 }}>
           <div style={{ position: 'absolute', top: '3px', left: form.sold ? '23px' : '3px', width: '18px', height: '18px', background: '#fff', borderRadius: '50%', transition: 'left 0.3s', boxShadow: '0 1px 4px rgba(0,0,0,0.3)' }} />
           <input type="checkbox" checked={form.sold} onChange={e => set('sold', e.target.checked)} style={{ opacity: 0, position: 'absolute', inset: 0, cursor: 'pointer', margin: 0 }} />
@@ -497,7 +547,7 @@ function ProductForm({ product, activeCategory, onSave, onCancel }) {
       </label>
 
       {/* Actions */}
-      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+      <div className="admin-form-actions" style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
         <button type="button" onClick={onCancel} style={{ padding: '0.9rem 1.8rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem' }}>
           Cancelar
         </button>
@@ -544,13 +594,10 @@ function TradeInCalculator() {
     const fetchDollar = async () => {
       setLoadingDollar(true);
       try {
-        const res = await fetch('https://dolarapi.com/v1/dolares/blue');
-        const data = await res.json();
-        if (data && data.venta) {
-          setDollarPrice(Math.round(data.venta + 10).toString());
-        }
+        const value = await fetchInfoDolarCordobaBlueSell();
+        setDollarPrice(Math.round(value).toString());
       } catch (err) {
-        console.error("Error fetching dollar:", err);
+        console.error("Error fetching InfoDolar Córdoba:", err);
       } finally {
         setLoadingDollar(false);
       }
@@ -587,9 +634,9 @@ function TradeInCalculator() {
   };
 
   return (
-    <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '24px', padding: '3rem 2rem', maxWidth: '800px', margin: '0 auto', animation: 'slideInToast 0.4s ease' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '3rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+    <div className="admin-calculator" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '24px', padding: '3rem 2rem', maxWidth: '800px', margin: '0 auto', animation: 'slideInToast 0.4s ease' }}>
+      <div className="admin-calculator-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '3rem' }}>
+        <div className="admin-section-title" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{ width: '48px', height: '48px', background: 'rgba(168, 85, 247,0.1)', border: '1px solid rgba(168, 85, 247,0.2)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Calculator size={24} color="#A855F7" />
           </div>
@@ -597,10 +644,10 @@ function TradeInCalculator() {
         </div>
 
         {/* Cotización Dólar */}
-        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '0.8rem 1.2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div className="admin-dollar-box" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '0.8rem 1.2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.05em' }}>Cotización Dólar (CBA)</div>
-            <div style={{ fontSize: '0.8rem', color: '#A855F7', fontWeight: 600 }}>{loadingDollar ? 'Cargando...' : 'Blue Actualizado'}</div>
+            <div style={{ fontSize: '0.8rem', color: '#A855F7', fontWeight: 600 }}>{loadingDollar ? 'Cargando...' : 'InfoDolar Córdoba'}</div>
           </div>
           <div style={{ position: 'relative', width: '100px' }}>
             <span style={{ position: 'absolute', left: '0.8rem', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.4)', fontWeight: 800, fontSize: '0.9rem' }}>$</span>
@@ -614,7 +661,7 @@ function TradeInCalculator() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
+      <div className="admin-trade-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginBottom: '2rem' }}>
         {/* Se lleva */}
         <div style={{ background: 'rgba(168, 85, 247,0.05)', border: '1px solid rgba(168, 85, 247,0.2)', padding: '1.5rem', borderRadius: '16px' }}>
           <h3 style={{ color: '#A855F7', fontSize: '1.1rem', fontWeight: 800, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -664,16 +711,16 @@ function TradeInCalculator() {
         </div>
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.03)', padding: '2.5rem 2rem', borderRadius: '20px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)', position: 'relative', overflow: 'hidden' }}>
+      <div className="admin-trade-result" style={{ background: 'rgba(255,255,255,0.03)', padding: '2.5rem 2rem', borderRadius: '20px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)', position: 'relative', overflow: 'hidden' }}>
         {diff > 0 && <div style={{ position: 'absolute', top: '-50%', left: '50%', transform: 'translateX(-50%)', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(168, 85, 247,0.15) 0%, transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />}
 
         <div style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 700, marginBottom: '0.5rem', position: 'relative', zIndex: 1 }}>Diferencia a cobrar</div>
-        <div style={{ fontSize: '4.5rem', fontWeight: 900, color: diff > 0 ? '#A855F7' : (diff === 0 ? '#fff' : '#ff453a'), letterSpacing: '-0.04em', position: 'relative', zIndex: 1, lineHeight: 1 }}>
+        <div className="admin-trade-total" style={{ fontSize: '4.5rem', fontWeight: 900, color: diff > 0 ? '#A855F7' : (diff === 0 ? '#fff' : '#ff453a'), letterSpacing: '-0.04em', position: 'relative', zIndex: 1, lineHeight: 1 }}>
           {diff > 0 ? '+' : ''}{diff} <span style={{ fontSize: '2rem', fontWeight: 700, opacity: 0.8 }}>USD</span>
         </div>
 
         {diff !== 0 && (
-          <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '0.8rem', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', zIndex: 1 }}>
+          <div className="admin-ars-result" style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '0.8rem', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', zIndex: 1 }}>
             <span style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>En pesos:</span>
             <span style={{ fontSize: '1.8rem', color: '#fff', fontWeight: 800 }}>
               $ {Math.round(diffArs).toLocaleString('es-AR')}
@@ -742,8 +789,8 @@ function FinancesView({ products, dollarPrice }) {
   };
 
   return (
-    <div style={{ animation: 'slideInToast 0.4s ease' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2.5rem' }}>
+    <div className="admin-finances" style={{ animation: 'slideInToast 0.4s ease' }}>
+      <div className="admin-section-title admin-finances-title" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2.5rem' }}>
         <div style={{ width: '48px', height: '48px', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.2)', borderRadius: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <TableIcon size={24} color="#22c55e" />
         </div>
@@ -754,7 +801,7 @@ function FinancesView({ products, dollarPrice }) {
       </div>
 
       {/* Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
+      <div className="admin-summary-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
         <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', padding: '1.5rem', borderRadius: '20px' }}>
           <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem' }}>Inversión Total</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#fff' }}>{totalCost} <span style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.3)' }}>USD</span></div>
@@ -769,9 +816,9 @@ function FinancesView({ products, dollarPrice }) {
         </div>
       </div>
 
-      <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '24px', overflow: 'hidden' }}>
+      <div className="admin-table-card" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '24px', overflow: 'hidden' }}>
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table className="admin-finance-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr>
                 <th style={thStyle}>Producto</th>
@@ -831,13 +878,10 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
   useEffect(() => {
     const fetchDollar = async () => {
       try {
-        const res = await fetch('https://dolarapi.com/v1/dolares/blue');
-        const data = await res.json();
-        if (data && data.venta) {
-          setDollarPrice(Math.round(data.venta + 10).toString());
-        }
+        const value = await fetchInfoDolarCordobaBlueSell();
+        setDollarPrice(Math.round(value).toString());
       } catch (err) {
-        console.error("Error fetching dollar:", err);
+        console.error("Error fetching InfoDolar Córdoba:", err);
       }
     };
     fetchDollar();
@@ -924,7 +968,7 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
   if (!authed) return <LoginScreen onLogin={() => setAuthed(true)} onExit={onExit} />;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#050505', fontFamily: 'Inter, sans-serif', color: '#fff' }}>
+    <div className="admin-shell" style={{ minHeight: '100vh', background: '#050505', fontFamily: 'Inter, sans-serif', color: '#fff' }}>
       <style>{`
         select option {
           background-color: #111 !important;
@@ -940,10 +984,10 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
       <div style={{ position: 'fixed', top: '-10%', right: '-10%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(168, 85, 247,0.05) 0%, transparent 70%)', filter: 'blur(100px)', pointerEvents: 'none', zIndex: 0 }} />
 
       {/* Header */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(5,5,5,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '1rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <button onClick={onExit} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '0.6rem 1.2rem', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.9rem', transition: 'all 0.3s' }}>
+      <div className="admin-header" style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(5,5,5,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div className="admin-header-inner" style={{ maxWidth: '1400px', margin: '0 auto', padding: '1rem 2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div className="admin-title-group" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+            <button className="admin-back-btn" onClick={onExit} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '0.6rem 1.2rem', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.9rem', transition: 'all 0.3s' }}>
               <ArrowLeft size={16} /> Tienda
             </button>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
@@ -957,9 +1001,9 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div className="admin-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             {/* Pikachu GIF */}
-            <div style={{ position: 'relative' }}>
+            <div className="admin-header-gif" style={{ position: 'relative' }}>
               <img
                 src="https://media.giphy.com/media/12Bpme5pTzGmg8/giphy.gif"
                 alt="Pikachu sad"
@@ -976,22 +1020,22 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
 
             {!isFormOpen && (
               <>
-                 <button onClick={() => setActiveView(activeView === 'calculator' ? 'inventory' : 'calculator')} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent', color: activeView === 'calculator' ? '#A855F7' : 'rgba(255,255,255,0.7)', border: `1px solid ${activeView === 'calculator' ? 'rgba(168, 85, 247, 0.4)' : 'rgba(255,255,255,0.1)'}`, padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.2)' : 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent'}>
+                 <button className="admin-action-btn" onClick={() => setActiveView(activeView === 'calculator' ? 'inventory' : 'calculator')} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent', color: activeView === 'calculator' ? '#A855F7' : 'rgba(255,255,255,0.7)', border: `1px solid ${activeView === 'calculator' ? 'rgba(168, 85, 247, 0.4)' : 'rgba(255,255,255,0.1)'}`, padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.2)' : 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = activeView === 'calculator' ? 'rgba(168, 85, 247, 0.15)' : 'transparent'}>
                    <Calculator size={18} /> {activeView === 'calculator' ? 'Inventario' : 'Calculadora'}
                  </button>
-                 <button onClick={() => setActiveView(activeView === 'finances' ? 'inventory' : 'finances')} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: activeView === 'finances' ? 'rgba(34, 197, 94, 0.15)' : 'transparent', color: activeView === 'finances' ? '#22c55e' : 'rgba(255,255,255,0.7)', border: `1px solid ${activeView === 'finances' ? 'rgba(34, 197, 94, 0.4)' : 'rgba(255,255,255,0.1)'}`, padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = activeView === 'finances' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = activeView === 'finances' ? 'rgba(34, 197, 94, 0.15)' : 'transparent'}>
+                 <button className="admin-action-btn" onClick={() => setActiveView(activeView === 'finances' ? 'inventory' : 'finances')} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: activeView === 'finances' ? 'rgba(34, 197, 94, 0.15)' : 'transparent', color: activeView === 'finances' ? '#22c55e' : 'rgba(255,255,255,0.7)', border: `1px solid ${activeView === 'finances' ? 'rgba(34, 197, 94, 0.4)' : 'rgba(255,255,255,0.1)'}`, padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = activeView === 'finances' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255,255,255,0.05)'} onMouseOut={e => e.currentTarget.style.background = activeView === 'finances' ? 'rgba(34, 197, 94, 0.15)' : 'transparent'}>
                    <TableIcon size={18} /> {activeView === 'finances' ? 'Inventario' : 'Finanzas'}
                  </button>
                  <a href="https://docs.google.com/spreadsheets/d/1NxaPijnAiEpxu0HJOwBBuazuS66bDGHPym5uMy_xzyc/edit?usp=sharing" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-                   <button style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.1)', padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}>
+                   <button className="admin-action-btn" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.1)', padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'all 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}>
                      <ExternalLink size={18} /> Ver excel
                    </button>
                  </a>
-                <button onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'transparent', color: '#ff453a', border: '1px solid rgba(255,69,58,0.3)', padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,69,58,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
+                <button className="admin-action-btn admin-logout-btn" onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'transparent', color: '#ff453a', border: '1px solid rgba(255,69,58,0.3)', padding: '0.75rem 1.2rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.95rem', transition: 'background 0.2s' }} onMouseOver={e => e.currentTarget.style.background = 'rgba(255,69,58,0.1)'} onMouseOut={e => e.currentTarget.style.background = 'transparent'}>
                   Salir
                 </button>
                 {activeView === 'inventory' && (
-                  <button onClick={startCreate} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#A855F7', color: '#000', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '0.95rem', boxShadow: '0 0 20px rgba(168, 85, 247,0.25)' }}>
+                  <button className="admin-action-btn admin-new-btn" onClick={startCreate} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: '#A855F7', color: '#000', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: '0.95rem', boxShadow: '0 0 20px rgba(168, 85, 247,0.25)' }}>
                     <Plus size={18} /> Nuevo Producto
                   </button>
                 )}
@@ -1001,7 +1045,7 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
         </div>
       </div>
 
-      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem', position: 'relative', zIndex: 1 }}>
+      <div className="admin-container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem', position: 'relative', zIndex: 1 }}>
         {/* Main Content Area */}
          {activeView === 'calculator' ? (
            <TradeInCalculator />
@@ -1011,12 +1055,12 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
           <>
             {/* Category Tabs */}
             {!isFormOpen && (
-              <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px', padding: '0.5rem', width: 'fit-content' }}>
+              <div className="admin-tabs" style={{ display: 'flex', gap: '0.6rem', marginBottom: '2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px', padding: '0.5rem', width: 'fit-content' }}>
                 {Object.keys(dbData).map(cat => {
                   const Icon = CATEGORY_ICONS[cat] || Package;
                   const isActive = activeCategory === cat;
                   return (
-                    <button key={cat} onClick={() => setActiveCategory(cat)} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.6rem 1.2rem', borderRadius: '14px', border: 'none', background: isActive ? '#A855F7' : 'transparent', color: isActive ? '#000' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.9rem', transition: 'all 0.3s' }}>
+                    <button className="admin-tab" key={cat} onClick={() => setActiveCategory(cat)} style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.6rem 1.2rem', borderRadius: '14px', border: 'none', background: isActive ? '#A855F7' : 'transparent', color: isActive ? '#000' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.9rem', transition: 'all 0.3s' }}>
                       <Icon size={16} />
                       <span>{CATEGORY_LABELS[cat] || cat}</span>
                       <span style={{ background: isActive ? 'rgba(0,0,0,0.15)' : 'rgba(255,255,255,0.08)', borderRadius: '100px', padding: '1px 7px', fontSize: '0.75rem', fontWeight: 800 }}>
@@ -1030,8 +1074,8 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
 
             {/* Product Form */}
             {isFormOpen && (
-              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '24px', padding: '2rem', marginBottom: '2rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
+              <div className="admin-form-card" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '24px', padding: '2rem', marginBottom: '2rem' }}>
+                <div className="admin-form-titlebar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
                   <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em' }}>
                     {creating ? '➕ Nuevo Producto' : '✏️ Editar Producto'}
                     <span style={{ marginLeft: '0.8rem', fontSize: '0.8rem', fontWeight: 600, color: '#A855F7', background: 'rgba(168, 85, 247,0.1)', padding: '3px 10px', borderRadius: '100px', verticalAlign: 'middle' }}>
@@ -1063,9 +1107,9 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
                     </button>
                   </div>
                 ) : (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.2rem' }}>
+                  <div className="admin-products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.2rem' }}>
                     {currentProducts.map(product => (
-                      <div key={product.id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px', overflow: 'hidden', transition: 'all 0.3s', position: 'relative' }}>
+                      <div className="admin-product-card" key={product.id} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px', overflow: 'hidden', transition: 'all 0.3s', position: 'relative' }}>
                         {/* Product Image */}
                         <div style={{ height: '180px', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
                           {product.image ? (
@@ -1092,7 +1136,7 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
                             {product.price && <span style={{ fontSize: '0.8rem', color: '#A855F7', fontWeight: 700 }}>${Number(product.price).toLocaleString('es-AR')}</span>}
                           </div>
 
-                          <div style={{ display: 'flex', gap: '0.6rem' }}>
+                          <div className="admin-card-actions" style={{ display: 'flex', gap: '0.6rem' }}>
                             <button onClick={() => startEdit(product)} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '0.6rem', color: 'rgba(255,255,255,0.8)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600, fontSize: '0.85rem', transition: 'all 0.2s' }}>
                               <Edit2 size={14} /> Editar
                             </button>
@@ -1113,8 +1157,8 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
 
       {/* Delete Confirm Modal */}
       {deleteConfirm && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(10px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-          <div style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '24px', padding: '2.5rem', maxWidth: '400px', width: '100%', textAlign: 'center' }}>
+        <div className="admin-confirm-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(10px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
+          <div className="admin-confirm-card" style={{ background: '#0a0a0a', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '24px', padding: '2.5rem', maxWidth: '400px', width: '100%', textAlign: 'center' }}>
             <div style={{ width: '60px', height: '60px', background: 'rgba(255,69,58,0.1)', border: '1px solid rgba(255,69,58,0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
               <Trash2 size={26} color="#ff453a" />
             </div>
