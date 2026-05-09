@@ -905,7 +905,16 @@ export default function AdminPanel({ dbData, fetchProducts, onExit }) {
 
 
 
-  const startEdit = (product) => { setCreating(false); setEditing(product); };
+  const startEdit = async (product) => {
+    setCreating(false);
+    const { data, error } = await supabase.from('products').select('images').eq('id', product.id).single();
+    if (error) {
+      console.error('Error fetching images for edit:', error);
+      setEditing(product);
+    } else {
+      setEditing({ ...product, images: data.images || [] });
+    }
+  };
   const startCreate = () => { setEditing(null); setCreating(true); };
   const cancelForm = () => { setEditing(null); setCreating(false); };
 

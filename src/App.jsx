@@ -49,7 +49,9 @@ function App() {
 
   const fetchProducts = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from('products').select('*');
+    // Seleccionamos todas las columnas excepto 'images' que puede ser muy pesada y causar timeouts
+    const { data, error } = await supabase.from('products').select('id, name, image, description, condition, battery_health, price, is_new, sold, colors, specs, category');
+    
     if (error) {
       console.error('Error fetching products:', error);
       setLoading(false);
@@ -77,7 +79,7 @@ function App() {
           id: item.id,
           name: item.name,
           image: item.image,
-          images: item.images || [],
+          images: [], // Se cargarán a demanda
           desc: item.description || '',
           condition: item.condition,
           batteryHealth: item.battery_health,
@@ -91,8 +93,32 @@ function App() {
     }
 
     setDbData(groupedData);
-
     setLoading(false);
+  };
+
+  const fetchFullProduct = async (product) => {
+    // Si ya tenemos las imágenes, no volvemos a cargar
+    if (product.images && product.images.length > 0) {
+      setSelectedProduct(product);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('products')
+      .select('images')
+      .eq('id', product.id)
+      .single();
+
+    if (error) {
+      console.error('Error fetching product images:', error);
+      setSelectedProduct(product);
+      return;
+    }
+
+    setSelectedProduct({
+      ...product,
+      images: data.images || []
+    });
   };
 
   useEffect(() => {
@@ -246,7 +272,7 @@ function App() {
 
         <div className="products-grid">
           {currentProducts.map((product) => (
-            <div className="product-card" key={product.id} style={{ '--card-color': (product.colors && product.colors.length > 0) ? product.colors[0] : 'var(--color-montivero-primary)' }} onClick={() => setSelectedProduct(product)}>
+            <div className="product-card" key={product.id} style={{ '--card-color': (product.colors && product.colors.length > 0) ? product.colors[0] : 'var(--color-montivero-primary)' }} onClick={() => fetchFullProduct(product)}>
               <div className="product-image-wrapper">
                 <img src={resolveAssetUrl(product.image)} alt={product.name} className="product-image" />
               </div>
